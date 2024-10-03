@@ -1,0 +1,565 @@
+<!-- Diapositiva 0: Bienvenida y Presentación -->
+
+<section>
+    <h1>Módulo de Desarrollo Frontend</h1>
+    <p>Diplomado en desarrollo Web</p>
+    <p>👨‍🏫 <strong>Instructor:</strong> Imanol Villarreal</p>
+</section>
+
+<!-- Diapositiva 1: Presentación del Docente -->
+
+<section>
+    <h2>Sobre mí 👋</h2>
+    <ul>
+        <li>Desarrollador Fullstack con NodeJS</li>
+        <li>Desarrollador Móvil en apps nativas y multiplataforma</li>
+        <li>Desarrollo e implementación de herramientas de gobierno electrónico.</li>
+    </ul>
+
+    <!-- <img src="tu-foto.jpg" alt="Foto del Instructor" style="width:150px;height:auto;"> -->
+</section>
+
+<section>
+    <h2>¡Conozcámonos! 🤝</h2>
+    <p>Por favor, preséntense brevemente:</p>
+    <ul>
+        <li>Tu nombre</li>
+        <li>Stack tecnológico que conoces</li>
+        <li>Una tecnología que te gustaría aprender</li>
+    </ul>
+    <p>Ejemplo: "Soy Ana, tengo experiencia con HTML, CSS y JavaScript. Me gustaría aprender más sobre React."</p>
+
+    <!-- <img src="networking-icon.png" alt="Ícono de Networking" style="width:100px;height:auto;"> -->
+</section>
+
+<!-- Diapositiva 2: Cronograma Completo del Módulo -->
+
+<section>
+    <h2>Cronograma del Módulo 📅</h2>
+    <p><strong>Semana 1</strong></p>
+    <ul>
+        <li><strong>Día 1:</strong> Introducción y fundamentos de React</li>
+        <li><strong>Día 2:</strong> Introducción a Next.js, enrutamiento con App Router</li>
+        <li><strong>Día 3:</strong> Introducción a Material-UI (MUI)</li>
+        <li><strong>Día 4:</strong> React Hook Form y Validación Avanzada con Zod</li>
+        <li><strong>Día 5:</strong> Data Fetching y Caching en App Router</li>
+    </ul>
+    <p><strong>Semana 2</strong></p>
+    <ul>
+        <li><strong>Día 6:</strong> Autenticación y Autorización Básica en App Router</li>
+        <li><strong>Día 7:</strong> Introducción a TanStack Query en Next.js App Router</li>
+        <li><strong>Día 8:</strong> TanStack Query Avanzado y State Management</li>
+        <li><strong>Día 9:</strong> Optimización de Rendimiento y Técnicas Avanzadas</li>
+        <li><strong>Día 10:</strong> Despliegue y Consideraciones de Producción</li>
+    </ul>
+    <p>🔹 <strong>Tareas Semanales:</strong> Asignadas al final de cada semana para reforzar el aprendizaje.</p>
+    <p>🔹 <strong>Proyecto Final:</strong> Una semana dedicada a desarrollar un proyecto completo aplicando todos los
+        conocimientos adquiridos.</p>
+</section>
+
+<section>
+    <h1><i class="devicon-react-original colored icon"></i> Día 1: Fundamentos de React</h1>
+    <p>Módulo de desarrollo Frontend</p>
+    <p>👨‍🏫 Docente: Imanol Villarreal</p>
+</section>
+
+<!-- Agenda con tiempos -->
+<section>
+    <h2>Agenda del Día 📋</h2>
+    <ol>
+        <li>Introducción y Motivación</li>
+        <li>Configuración del Entorno e Instalación</li>
+        <li>Fundamentos de React</li>
+        <li>Uso Correcto del Estado con useState</li>
+        <li>Declarativo vs Imperativo</li>
+        <li>Descanso</li>
+        <li>JSX y TSX</li>
+        <li>Props y Estado</li>
+        <li>Hooks básicos</li>
+        <li>Resumen y Cierre</li>
+    </ol>
+</section>
+
+<!-- Introducción y Motivación -->
+<section>
+    <h2>1. Introducción y Motivación 🚀</h2>
+    <p>Bienvenida al curso y objetivos de aprendizaje.</p>
+</section>
+
+<!-- Importancia del Desarrollo Frontend -->
+<section>
+    <h2>Importancia del Desarrollo Frontend 🌐</h2>
+    <p>El frontend es la cara visible de las aplicaciones web, brindando experiencias interactivas y atractivas a los
+        usuarios.</p>
+    <p>Un buen desarrollo frontend mejora la usabilidad y satisfacción del usuario.</p>
+    <!-- Imagen representativa -->
+    <img src="public/images/frontend-importance.png" alt="Importancia del Desarrollo Frontend"
+         style="width: 80%; margin-top: 20px;">
+</section>
+
+<!-- Importancia del arte -->
+<section>
+    <h2>Estado del Arte en Desarrollo Frontend 🌐</h2>
+    <p>El ecosistema del desarrollo frontend ha evolucionado significativamente en los últimos años, con varias
+        librerías y frameworks que lideran la industria:</p>
+    <div style="display: flex; justify-content: space-around; align-items: flex-start; margin-top: 20px;">
+        <div style="text-align: center; width: 30%;">
+            <i class="devicon-angularjs-plain colored" style="font-size: 4em;"></i>
+            <h3>Angular</h3>
+            <ul style="list-style-type: none; padding-left: 0;">
+                <li>Desarrollado por Google</li>
+                <li>Framework completo basado en TypeScript</li>
+                <li>Ideal para aplicaciones de gran escala</li>
+            </ul>
+        </div>
+        <div style="text-align: center; width: 30%;">
+            <i class="devicon-react-original colored" style="font-size: 4em;"></i>
+            <h3>React</h3>
+            <ul style="list-style-type: none; padding-left: 0;">
+                <li>Desarrollado por Facebook</li>
+                <li>Biblioteca para interfaces de usuario</li>
+                <li>Enfoque declarativo y virtual DOM</li>
+            </ul>
+        </div>
+        <div style="text-align: center; width: 30%;">
+            <i class="devicon-vuejs-plain colored" style="font-size: 4em;"></i>
+            <h3>Vue.js</h3>
+            <ul style="list-style-type: none; padding-left: 0;">
+                <li>Creado por Evan You</li>
+                <li>Combina lo mejor de Angular y React</li>
+                <li>Fácil de aprender y adaptable</li>
+            </ul>
+        </div>
+    </div>
+    <p style="margin-top: 20px;">Estos frameworks y bibliotecas han establecido estándares y prácticas que han mejorado
+        la eficiencia y la experiencia del desarrollador.</p>
+</section>
+
+
+<!-- Popularidad de React -->
+<section>
+    <h2>Popularidad de React 📈</h2>
+    <p>Según la encuesta de <a href="https://2023.stateofjs.com/en-US/libraries/front-end-frameworks/">State of JS</a>:
+    </p>
+    <ul>
+        <li>React es la biblioteca de frontend más utilizada.</li>
+    </ul>
+    <!-- Imagen de popularidad -->
+    <img src="public/images/state-of-js-popularity.png" alt="Popularidad de Frameworks"
+         style="width: 80%; margin-top: 20px;">
+</section>
+
+<!-- ¿Por qué React? -->
+<section>
+    <h2>¿Por qué React? 🤔</h2>
+    <p>React es una biblioteca JavaScript para construir interfaces de usuario.</p>
+    <ul>
+        <li>Componentes reutilizables 🧩</li>
+        <li>Actualizaciones eficientes con Virtual DOM ⚡</li>
+        <li>Gran comunidad y ecosistema 🌐</li>
+        <li>Alta demanda en el mercado laboral 💼</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Virtual DOM en React 🌳</h2>
+    <div style="display: flex; justify-content: space-between;">
+        <div style="width: 60%;">
+            <h3>¿Qué es?</h3>
+            <ul>
+                <li>Representación ligera del DOM real en memoria</li>
+                <li>Estructura de árbol de objetos JavaScript</li>
+                <li>Sincronizado con el DOM "real"</li>
+            </ul>
+            <h3>Ventajas</h3>
+            <ul>
+                <li>Mejora el rendimiento de la aplicación</li>
+                <li>Minimiza las manipulaciones del DOM</li>
+                <li>Actualiza eficientemente solo lo necesario</li>
+            </ul>
+        </div>
+        <div style="width: 35%;">
+            <img src="/public/images/virtual-dom.jpeg" alt="Representación del Virtual DOM vs Real DOM"
+                 style="width:100%; height:auto;">
+            <p style="font-size: 0.8em; text-align: center;">Virtual DOM vs Real DOM</p>
+        </div>
+    </div>
+</section>
+
+
+<section>
+    <h2>Instalación de Node.js y NPM 🛠️</h2>
+    <p>Antes de empezar, necesitamos instalar Node.js y NPM:</p>
+    <ol>
+        <li>
+            Visita <a href="https://nodejs.org/" target="_blank">nodejs.org</a> y descarga la versión LTS (Long Term
+            Support).
+        </li>
+        <li>
+            Sigue las instrucciones de instalación para tu sistema operativo.
+        </li>
+        <li>
+            Verifica la instalación abriendo una terminal y ejecutando:
+            <pre><code class="hljs language-bash">
+node -v
+npm -v
+            </code></pre>
+        </li>
+    </ol>
+    <p>Deberías ver las versiones instaladas de Node.js y NPM.</p>
+    <!-- Imagen opcional de la instalación -->
+    <!-- <img src="public/images/node-installation.png" alt="Instalación de Node.js" style="width: 80%; margin-top: 20px;"> -->
+</section>
+
+<section>
+    <h2>Creando una Aplicación React con Create React App 🚀</h2>
+    <p>Create React App nos permite iniciar un proyecto de React rápidamente:</p>
+    <ol>
+        <li>
+            Abre una terminal y navega hasta el directorio donde deseas crear tu proyecto.
+        </li>
+        <li>
+            Ejecuta el siguiente comando:
+            <pre><code class="hljs language-bash">
+npx create-react-app my-app --template typescript
+            </code></pre>
+            <p>Esto creará una nueva carpeta llamada <code>mi-app</code> con la estructura del proyecto.</p>
+        </li>
+        <li>
+            Ingresa al directorio del proyecto:
+            <pre><code class="hljs language-bash">
+cd my-app
+            </code></pre>
+        </li>
+        <li>
+            Inicia la aplicación:
+            <pre><code class="hljs language-bash">
+npm start
+            </code></pre>
+            <p>La aplicación se abrirá en <a href="http://localhost:3000" target="_blank">http://localhost:3000</a>.</p>
+        </li>
+    </ol>
+    <!-- Imagen opcional de la aplicación en funcionamiento -->
+    <!-- <img src="public/images/react-app-running.png" alt="Aplicación React en funcionamiento" style="width: 80%; margin-top: 20px;"> -->
+</section>
+
+<!-- Declarativo vs Imperativo -->
+<section>
+    <h2>Declarativo vs Imperativo 🤔</h2>
+    <p>Enfoques de programación en React.</p>
+</section>
+
+<!-- Programación Imperativa -->
+<section>
+    <h2>Programación Imperativa 🛠️</h2>
+    <p>Le decimos al programa cómo hacer las cosas paso a paso.</p>
+    <pre><code class="hljs language-javascript">
+const numeros = [1, 2, 3];
+const dobles = [];
+for (let i = 0; i &lt; numeros.length; i++) {
+  dobles.push(numeros[i] * 2);
+}
+console.log(dobles); // [2, 4, 6]
+    </code></pre>
+</section>
+
+<!-- Programación Declarativa -->
+<section>
+    <h2>Programación Declarativa 📝</h2>
+    <p>Le decimos al programa qué queremos lograr.</p>
+    <pre><code class="hljs language-javascript">
+const numeros = [1, 2, 3];
+const dobles = numeros.map(n =&gt; n * 2);
+console.log(dobles); // [2, 4, 6]
+    </code></pre>
+</section>
+
+<!-- Componentes en React -->
+<section>
+    <h2>Componentes en React 🧩</h2>
+    <p>Construyendo bloques reutilizables de UI.</p>
+    <pre><code class="hljs language-jsx">
+function Saludo({ nombre }) {
+  return &lt;h1&gt;Hola, {nombre}!&lt;/h1&gt;;
+}
+
+export default function App() {
+  return (
+    &lt;div&gt;
+      &lt;Saludo nombre="Mundo" /&gt;
+      &lt;Saludo nombre="React" /&gt;
+    &lt;/div&gt;
+  );
+}
+    </code></pre>
+</section>
+
+<!-- Componentes de Clase vs Funcionales -->
+<section>
+    <h2>Componentes de Clase vs Funcionales 🧩</h2>
+    <p>Comparación de sintaxis y uso.</p>
+    <h3>Componente de Clase:</h3>
+    <pre><code class="hljs language-jsx">
+class Saludo extends React.Component {
+  render() {
+    return &lt;h1&gt;Hola, {this.props.nombre}!&lt;/h1&gt;;
+  }
+}
+    </code></pre>
+    <h3>Componente Funcional:</h3>
+    <pre><code class="hljs language-jsx">
+function Saludo({ nombre }) {
+  return &lt;h1&gt;Hola, {nombre}!&lt;/h1&gt;;
+}
+    </code></pre>
+</section>
+
+<!-- Estado en React -->
+<section>
+    <h2>Estado en React 🎛️</h2>
+    <p>El estado es información mutable que afecta cómo se renderiza el componente.</p>
+    <p>Permite crear interfaces interactivas y dinámicas.</p>
+</section>
+
+<!-- Contraejemplo: Contador sin useState -->
+<section>
+    <h2>Contraejemplo: Contador sin useState ❌</h2>
+    <p>Un contador que no funciona correctamente:</p>
+    <pre><code class="hljs language-jsx">
+function ContadorMalo() {
+  let contador = 0;
+
+  function incrementar() {
+    contador += 1;
+    console.log(contador);
+  }
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Has hecho clic {contador} veces&lt;/p&gt;
+      &lt;button onClick={incrementar}&gt;
+        Incrementar
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+    </code></pre>
+    <p>El valor de <code>contador</code> no cambia en la interfaz. ¿Por qué?</p>
+</section>
+
+<!-- Uso Correcto del Estado con useState -->
+<section>
+    <h2>Uso Correcto del Estado ✅</h2>
+    <p>Utilizando <code>useState</code> para manejar el estado:</p>
+    <pre><code class="hljs language-jsx">
+function Contador() {
+  const [contador, setContador] = useState(0);
+
+  function incrementar() {
+    setContador(contador + 1);
+  }
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Has hecho clic {contador} veces&lt;/p&gt;
+      &lt;button onClick={incrementar}&gt;
+        Incrementar
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+    </code></pre>
+</section>
+
+
+<!-- Descanso -->
+<!--<section>
+    <h2>¡Descanso! ☕</h2>
+    <p>Tomemos un descanso de 10 minutos. Regresamos a las 9:00 pm.</p>
+</section>-->
+
+<!-- JSX y TSX -->
+<section>
+    <h2>JSX y TSX 🖋️</h2>
+    <p>Sintaxis que facilita la creación de componentes de UI:</p>
+    <ul>
+        <li><i class="devicon-javascript-plain colored icon"></i> JSX: Sintaxis similar a HTML en JavaScript.</li>
+        <li><i class="devicon-typescript-plain colored icon"></i> TSX: JSX con TypeScript para tipado estático.</li>
+    </ul>
+</section>
+
+<!-- Ejemplo de JSX -->
+<section>
+    <h2>Ejemplo de JSX 📝</h2>
+    <p>Creando una lista de elementos:</p>
+    <pre><code class="hljs language-jsx">
+function Lista({ items }) {
+  return (
+    &lt;ul&gt;
+      {items.map(item =&gt; (
+        &lt;li key={item.id}&gt;{item.texto}&lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+    </code></pre>
+</section>
+
+<section>
+    <h2>Comparación entre JSX y TSX 📝</h2>
+    <p>JSX y TSX son extensiones de sintaxis para JavaScript y TypeScript, respectivamente.</p>
+    <div style="display: flex; justify-content: space-around; margin-top: 20px;">
+        <div style="width: 45%;">
+            <h3>JSX</h3>
+            <ul>
+                <li>Extensión de JavaScript.</li>
+                <li>Permite escribir código similar a HTML dentro de JavaScript.</li>
+                <li>No incluye tipado estático.</li>
+                <li>Usa la extensión de archivo <code>.jsx</code>.</li>
+            </ul>
+            <pre><code class="hljs language-jsx">
+function Saludo(props) {
+  return &lt;h1&gt;Hola, {props.nombre}!&lt;/h1&gt;;
+}
+            </code></pre>
+        </div>
+        <div style="width: 45%;">
+            <h3>TSX</h3>
+            <ul>
+                <li>Extensión de TypeScript.</li>
+                <li>Combina JSX con tipado estático de TypeScript.</li>
+                <li>Ayuda a prevenir errores en tiempo de compilación.</li>
+                <li>Usa la extensión de archivo <code>.tsx</code>.</li>
+            </ul>
+            <pre><code class="hljs language-tsx">
+interface Props {
+  nombre: string;
+}
+
+const Saludo: React.FC&lt;Props&gt; = ({ nombre }) =&gt; {
+  return &lt;h1&gt;Hola, {nombre}!&lt;/h1&gt;;
+};
+            </code></pre>
+        </div>
+    </div>
+    <p style="margin-top: 20px;">Ambos permiten crear componentes de React, pero TSX ofrece las ventajas del tipado
+        estático de TypeScript.</p>
+</section>
+
+<!-- Props y Estado -->
+<section>
+    <h2>Props y Estado 🎛️</h2>
+    <p>Gestionando datos en los componentes:</p>
+    <ul>
+        <li><strong>Props:</strong> Parámetros de componentes (inmutables).</li>
+        <li><strong>Estado:</strong> Datos internos del componente (mutables).</li>
+    </ul>
+</section>
+
+<!-- Hooks Básicos -->
+<section>
+    <h2>Hooks Básicos 🪝</h2>
+    <p>Funciones que permiten usar estado y otras características en componentes funcionales:</p>
+    <ul>
+        <li><i class="devicon-react-original colored icon"></i> useState</li>
+        <li><i class="devicon-react-original colored icon"></i> useEffect</li>
+        <li><i class="devicon-react-original colored icon"></i> useRef</li>
+        <li><i class="devicon-react-original colored icon"></i> useContext</li>
+    </ul>
+</section>
+
+<!-- Ejemplo de useEffect -->
+<section>
+    <h2>Ejemplo de useEffect 🪝</h2>
+    <p>Actualizando el título del documento:</p>
+    <pre><code class="hljs language-jsx">
+function ContadorConEfecto() {
+  const [contador, setContador] = useState(0);
+
+  useEffect(() =&gt; {
+    document.title = \`Has hecho clic \${contador} veces\`;
+  }, [contador]);
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Has hecho clic {contador} veces&lt;/p&gt;
+      &lt;button onClick={() =&gt; setContador(contador + 1)}&gt;
+        Incrementar
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+    </code></pre>
+</section>
+
+<!-- Ejemplo de useRef -->
+<section>
+    <h2>Ejemplo de useRef 🪝</h2>
+    <p>Accediendo a referencias del DOM:</p>
+    <pre><code class="hljs language-jsx">
+function EnfoqueInput() {
+  const inputRef = useRef(null);
+
+  useEffect(() =&gt; {
+    inputRef.current.focus();
+  }, []);
+
+  return &lt;input ref={inputRef} /&gt;;
+}
+    </code></pre>
+</section>
+
+<!-- Introducción a useContext -->
+<section>
+    <h2>Introducción a useContext 🪝</h2>
+    <p>Compartiendo datos globales sin pasar props manualmente.</p>
+    <pre><code class="hljs language-jsx">
+// Creando un contexto
+const ContextoTema = React.createContext('light');
+
+// Componente que consume el contexto
+function BotonTema() {
+  const tema = useContext(ContextoTema);
+  return &lt;button className={tema}&gt;Botón con tema {tema}&lt;/button&gt;;
+}
+
+// Usando el contexto en App
+function App() {
+  return (
+    &lt;ContextoTema.Provider value="dark"&gt;
+      &lt;BotonTema /&gt;
+    &lt;/ContextoTema.Provider&gt;
+  );
+}
+    </code></pre>
+</section>
+
+<!-- Resumen -->
+<section>
+    <h2>Resumen 📚</h2>
+    <p>Hoy hemos cubierto:</p>
+    <ul>
+        <li>La importancia de React en el desarrollo frontend.</li>
+        <li>Configuración del entorno y creación de una aplicación React.</li>
+        <li>Fundamentos de React y creación de componentes.</li>
+        <li>Programación declarativa vs imperativa.</li>
+        <li>Uso de JSX y Hooks para construir interfaces interactivas.</li>
+        <li>Introducción a `useRef` y `useContext` para manejo de referencias y datos globales.</li>
+    </ul>
+</section>
+
+<!-- Tarea para los Alumnos -->
+<section>
+    <h2>Tarea 📝</h2>
+    <p>Utiliza <a href="https://www.wappalyzer.com/">Wappalyzer</a> para averiguar el stack tecnológico de tus sitios
+        web favoritos.</p>
+    <p>Identifica si usan React u otras tecnologías aprendidas.</p>
+    <p>Crea un componente React que utilice <code>useState</code>, <code>useEffect</code>, <code>useRef</code> y <code>useContext</code>.
+    </p>
+</section>
+
+<!-- Gracias -->
+<section>
+    <h2>¡Gracias! 🙌</h2>
+    <p>¿Preguntas?</p>
+</section>

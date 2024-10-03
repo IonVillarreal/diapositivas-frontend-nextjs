@@ -1,0 +1,1140 @@
+<section>
+    <h1>Día 2: Introducción a NextJS</h1>
+    <h3>Módulo de desarrollo Frontend</h3>
+    <p>
+        <i class="devicon-nextjs-original colored" style="font-size: 5em;"></i>
+    </p>
+    <p>
+        👨‍🏫 Docente: Imanol Villarreal
+    </p>
+</section>
+
+<section>
+    <h2>Agenda del Día 📋</h2>
+    <ol>
+        <li>Repaso rápido del día anterior</li>
+        <li>Introducción a Next.js</li>
+        <li>Sistema de Enrutamiento en App Router</li>
+        <li>Layouts en App Router</li>
+        <!--        <li><em>Descanso</em></li>-->
+        <!--        <li>Manejo de Metadatos y SEO en App Router</li>-->
+        <li>Loading UI y Streaming</li>
+        <li>Resumen y Tarea</li>
+    </ol>
+</section>
+
+<section>
+    <h2>Repaso: ReactJS y Hooks Básicos 🔄</h2>
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <div>
+            <i class="devicon-react-original colored" style="font-size: 5em;"></i>
+        </div>
+        <ul>
+            <li>Biblioteca para construir interfaces de usuario</li>
+            <li>Basado en componentes</li>
+            <li>Virtual DOM para rendimiento optimizado</li>
+            <li>Hooks para lógica stateful en componentes funcionales</li>
+        </ul>
+    </div>
+</section>
+
+
+<section>
+    <h2>Repaso: Hooks Básicos con TypeScript</h2>
+    <pre><code class="typescript" data-trim data-noescape>
+import React, { useState, useEffect, useRef, useContext } from 'react';
+
+// useState
+const Counter: React.FC = () => {
+    const [count, setCount] = useState&lt;number&gt;(0);
+    return &lt;button onClick={() => setCount(count + 1)}&gt;Count: {count}&lt;/button&gt;
+};
+
+// useEffect
+useEffect(() => {
+    document.title = `You clicked ${count} times`;
+}, [count]);
+
+// useRef
+const inputRef = useRef&lt;HTMLInputElement&gt;(null);
+useEffect(() => {
+    inputRef.current?.focus();
+}, []);
+
+// useContext
+const ThemeContext = React.createContext&lt;'light' | 'dark'&gt;('light');
+const ThemeComponent: React.FC = () => {
+    const theme = useContext(ThemeContext);
+    return &lt;div&gt;Current theme: {theme}&lt;/div&gt;
+};
+    </code></pre>
+</section>
+
+<section>
+    <h2>Ejemplo Avanzado: useContext (contraejemplo)</h2>
+    <pre>
+        <code class="hljs language-jsx">
+
+import { useState } from "react";
+import ReactDOM from "react-dom/client";
+
+function Component1() {
+  const [user, setUser] = useState("Jesse Hall");
+
+  return (
+    &lt;&gt;
+      &lt;h1&gt;{`Hello ${user}!`}&lt;/h1&gt;
+      &lt;Component2 user={user} /&gt;
+    &lt;/&gt;
+  );
+}
+
+function Component2({ user }) {
+  return (
+    &lt;&gt;
+      &lt;h1&gt;Component 2&lt;/h1&gt;
+      &lt;Component3 user={user} /&gt;
+    &lt;/&gt;
+  );
+}
+
+function Component3({ user }) {
+  return (
+    &lt;&gt;
+      &lt;h1&gt;Component 3&lt;/h1&gt;
+      &lt;Component4 user={user} /&gt;
+    &lt;/&gt;
+  );
+}
+
+function Component4({ user }) {
+  return (
+    &lt;&gt;
+      &lt;h1&gt;Component 4&lt;/h1&gt;
+      &lt;Component5 user={user} /&gt;
+    &lt;/&gt;
+  );
+}
+
+function Component5({ user }) {
+  return (
+    &lt;&gt;
+      &lt;h1&gt;Component 5&lt;/h1&gt;
+      &lt;h2&gt;{`Hello ${user} again!`}&lt;/h2&gt;
+    &lt;/&gt;
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(&lt;Component1 /&gt;);
+
+    </code>
+    </pre>
+</section>
+
+
+<section>
+    <h2>Ejemplo Avanzado: useContext</h2>
+    <pre>
+        <code class="hljs language-jsx">
+
+import { useState, createContext, useContext } from "react";
+import ReactDOM from "react-dom/client";
+
+const UserContext = createContext();
+
+function Component1() {
+  const [user, setUser] = useState("Jesse Hall");
+
+  return (
+    &lt;UserContext.Provider value={user}&gt;
+      &lt;h1&gt;{`Hello ${user}!`}&lt;/h1&gt;
+      &lt;Component2 /&gt;
+    &lt;/UserContext.Provider&gt;
+  );
+}
+
+function Component2() {
+  return (
+    &lt;&gt;
+      &lt;h1&gt;Component 2&lt;/h1&gt;
+      &lt;Component3 /&gt;
+    &lt;/&gt;
+  );
+}
+
+function Component3() {
+  return (
+    &lt;&gt;
+      &lt;h1&gt;Component 3&lt;/h1&gt;
+      &lt;Component4 /&gt;
+    &lt;/&gt;
+  );
+}
+
+function Component4() {
+  return (
+    &lt;&gt;
+      &lt;h1&gt;Component 4&lt;/h1&gt;
+      &lt;Component5 /&gt;
+    &lt;/&gt;
+  );
+}
+
+function Component5() {
+  const user = useContext(UserContext);
+
+  return (
+    &lt;&gt;
+      &lt;h1&gt;Component 5&lt;/h1&gt;
+      &lt;h2&gt;{`Hello ${user} again!`}&lt;/h2&gt;
+    &lt;/&gt;
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(&lt;Component1 /&gt;);
+
+    </code>
+    </pre>
+</section>
+
+
+<section>
+    <h2>Introducción a Next.js 🚀</h2>
+    <div style="text-align: center;">
+        <i class="devicon-nextjs-original colored" style="font-size: 150px;"></i>
+    </div>
+    <p>"The React Framework for Production"</p>
+</section>
+
+<section>
+    <h2>Meta Frameworks: Potenciando el Desarrollo Web 🚀</h2>
+    <div style="display: flex; justify-content: space-around; align-items: center;">
+        <div style="flex: 1;">
+            <h3>¿Qué son los Meta Frameworks?</h3>
+            <ul>
+                <li>Construidos sobre frameworks existentes</li>
+                <li>Agregan funcionalidades y optimizaciones</li>
+                <li>Simplifican el desarrollo de aplicaciones complejas</li>
+            </ul>
+        </div>
+        <div style="flex: 1;">
+            <h3>Ejemplos Populares</h3>
+            <ul>
+                <li>Para React:
+                    <ul>
+                        <li><i class="devicon-nextjs-original colored"></i> Next.js</li>
+                        <li><i class="devicon-gatsby-plain colored"></i> Gatsby</li>
+                        <li><i class="devicon-remix-original colored"></i> Remix</li>
+                    </ul>
+                </li>
+                <li>Para Vue:
+                    <ul>
+                        <li><i class="devicon-nuxtjs-plain colored"></i> Nuxt.js</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div>
+        <h3>Beneficios Comunes</h3>
+        <ul>
+            <li>Renderizado del lado del servidor (SSR) 🖥️</li>
+            <li>Generación de sitios estáticos (SSG) 📄</li>
+            <li>Optimización de rendimiento automática ⚡</li>
+            <li>Enrutamiento y manejo de estado mejorados 🔀</li>
+        </ul>
+    </div>
+</section>
+
+<section>
+    <h3>¿Qué es Next.js? 🤔</h3>
+    <ul>
+        <li>Framework de React de código abierto 📖</li>
+        <li>Creado por Vercel 🏢</li>
+        <li>Facilita la creación de aplicaciones web full-stack 🌐</li>
+        <li>Optimizado para producción por defecto 🏭</li>
+    </ul>
+</section>
+
+
+<section>
+    <h3>Ventajas de Next.js sobre React puro 💪</h3>
+    <div style="display: flex; justify-content: space-around;">
+        <div style="flex: 1;">
+            <h4>React</h4>
+            <ul>
+                <li>Biblioteca UI</li>
+                <li>Renderizado del lado del cliente</li>
+                <li>Configuración manual</li>
+            </ul>
+        </div>
+        <div style="flex: 1;">
+            <h4>Next.js</h4>
+            <ul>
+                <li>Framework completo</li>
+                <li>SSR y SSG incorporados</li>
+                <li>Configuración automática</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+
+<section>
+    <h3>Características principales de Next.js 🌟</h3>
+    <ul>
+        <li>Renderizado del lado del servidor (SSR) 🖥️</li>
+        <li>Generación de sitios estáticos (SSG) 📄</li>
+        <li>Generación estática incremental 🔄</li>
+        <li>Enrutamiento basado en el sistema de archivos 🗂️</li>
+        <li>División de código automática ✂️</li>
+        <li>Soporte para TypeScript 📘</li>
+        <li>Optimización de imágenes 🖼️</li>
+        <li>API Routes 🛣️</li>
+    </ul>
+</section>
+
+<section>
+    <h3>¿Por qué elegir Next.js sobre React puro? 🤷‍♂️</h3>
+    <ol>
+        <li>Mejor rendimiento out-of-the-box 🏎️</li>
+        <li>SEO mejorado gracias al SSR 🔍</li>
+        <li>Desarrollo más rápido con menos configuración ⚡</li>
+        <li>Escalabilidad simplificada 📈</li>
+        <li>Ecosistema y comunidad robustos 🌍</li>
+        <li>Despliegue simplificado (especialmente con Vercel) 🚀</li>
+    </ol>
+</section>
+
+
+<section>
+    <h2>Creando un proyecto Next.js con App Router 🚀</h2>
+    <p>Vamos a crear un proyecto Next.js desde cero utilizando el nuevo App Router</p>
+    <ul>
+        <li>Configuración inicial</li>
+        <li>Estructura del proyecto</li>
+        <li>Creación de rutas</li>
+        <li>Layouts y páginas</li>
+        <li>Estilos y componentes</li>
+    </ul>
+</section>
+
+<section>
+    <h3>Configuración inicial 🛠️</h3>
+    <pre><code class="bash" data-trim contenteditable>
+# Crear un nuevo proyecto Next.js con App Router
+npx create-next-app@latest mi-proyecto-next-app
+
+# Opciones a seleccionar:
+# ✔ Would you like to use TypeScript? … Yes
+# ✔ Would you like to use ESLint? … Yes
+# ✔ Would you like to use Tailwind CSS? … No
+# ✔ Would you like to use `src/` directory? … No
+# ✔ Would you like to use App Router? (recommended) … Yes
+# ✔ Would you like to customize the default import alias? … No
+
+# Navegar al directorio del proyecto
+cd mi-proyecto-next-app
+
+# Iniciar el servidor de desarrollo
+npm run dev
+    </code></pre>
+    <p>Visita <a href="http://localhost:3000">http://localhost:3000</a> en tu navegador</p>
+</section>
+
+<section>
+    <h3>Estructura del proyecto 📁</h3>
+    <pre><code class="plaintext" data-trim contenteditable>
+mi-proyecto-next-app/
+├── app/
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── globals.css
+├── public/
+│   └── next.svg
+├── next.config.js
+├── package.json
+└── tsconfig.json
+    </code></pre>
+</section>
+
+<section>
+    <h3>Creando una nueva ruta 🛣️</h3>
+    <pre><code class="typescript" data-trim contenteditable>
+// app/about/page.tsx
+import React from 'react';
+
+export default function AboutPage() {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;About Us&lt;/h1&gt;
+      &lt;p&gt;Welcome to our about page!&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+    </code></pre>
+    <p>Esta página estará disponible en <code>/about</code></p>
+</section>
+
+
+
+<section>
+    <h3>Añadiendo estilos 🎨</h3>
+    <pre><code class="css" data-trim contenteditable>
+/* app/globals.css */
+:root {
+  --max-width: 1100px;
+  --border-radius: 12px;
+  --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
+    'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
+    'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+    </code></pre>
+</section>
+
+<section>
+    <h3>Paso 6: Creando un componente 🧩</h3>
+    <pre><code class="typescript" data-trim contenteditable>
+// app/components/Button.tsx
+import React from 'react';
+
+interface ButtonProps {
+  children: React.ReactNode;
+  onClick?: () => void;
+}
+
+export default function Button({ children, onClick }: ButtonProps) {
+  return (
+    &lt;button
+            onClick={onClick}
+            style={{
+            padding: '10px 15px',
+        backgroundColor: '#0070f3',
+        color: 'white',
+        border: 'none',
+        borderRadius: '5px',
+        cursor: 'pointer',
+      }}
+    &gt;
+      {children}
+    &lt;/button&gt;
+  );
+}
+    </code></pre>
+</section>
+
+<section>
+    <h3>Usando el componente Button 🔘</h3>
+    <pre><code class="typescript" data-trim contenteditable>
+// app/page.tsx
+import React from 'react';
+import Button from './components/Button';
+
+export default function Home() {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Welcome to Next.js with App Router&lt;/h1&gt;
+      &lt;Button onClick={() => alert('Button clicked!')}&gt;
+        Click me!
+      &lt;/Button&gt;
+    &lt;/div&gt;
+  );
+}
+    </code></pre>
+</section>
+
+<section>
+    <h2>Sistema de Enrutamiento en App Router 🗺️</h2>
+    <ul>
+        <li>Introducción al App Router</li>
+        <li>Estructura de carpetas basada en rutas</li>
+        <li>Páginas y rutas dinámicas</li>
+        <li>Rutas anidadas</li>
+        <li>Grupos de rutas</li>
+    </ul>
+</section>
+
+<section>
+    <h3>Introducción al App Router</h3>
+    <table>
+        <tr>
+            <th>Pages Router</th>
+            <th>App Router</th>
+        </tr>
+        <tr>
+            <td>Directorio `pages`</td>
+            <td>Directorio `app`</td>
+        </tr>
+        <tr>
+            <td>Enrutamiento basado en archivos</td>
+            <td>Enrutamiento basado en carpetas</td>
+        </tr>
+        <tr>
+            <td>Componentes de React</td>
+            <td>Componentes de servidor por defecto</td>
+        </tr>
+        <tr>
+            <td>`_app.js` y `_document.js`</td>
+            <td>Layout anidados</td>
+        </tr>
+        <tr>
+            <td>API Routes separadas</td>
+            <td>Route Handlers integrados</td>
+        </tr>
+    </table>
+</section>
+
+
+<section>
+    <h3>Estructura de carpetas basada en rutas</h3>
+    <pre><code class="plaintext" data-trim contenteditable>
+app/
+├── layout.tsx
+├── page.tsx
+├── about/
+│   └── page.tsx
+├── blog/
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── [slug]/
+│       └── page.tsx
+└── dashboard/
+    ├── layout.tsx
+    ├── page.tsx
+    └── settings/
+        └── page.tsx
+    </code></pre>
+</section>
+
+<section>
+    <h3>Páginas y rutas dinámicas</h3>
+    <pre><code class="typescript" data-trim contenteditable>
+// app/blog/[slug]/page.tsx
+export default function BlogPost({ params }: { params: { slug: string } }) {
+  return &lt;h1&gt;Blog Post: {params.slug}&lt;/h1&gt;;
+}
+
+// Generar rutas dinámicas en tiempo de compilación
+export async function generateStaticParams() {
+  const posts = await getPosts() // función hipotética para obtener posts
+  return posts.map((post) =&gt; ({
+    slug: post.slug,
+  }));
+}
+    </code></pre>
+</section>
+
+<section>
+    <h3>Rutas anidadas</h3>
+    <pre><code class="plaintext" data-trim contenteditable>
+app/
+└── dashboard/
+    ├── layout.tsx
+    ├── page.tsx
+    ├── profile/
+    │   └── page.tsx
+    └── settings/
+        ├── layout.tsx
+        ├── page.tsx
+        ├── account/
+        │   └── page.tsx
+        └── notifications/
+            └── page.tsx
+    </code></pre>
+</section>
+
+<section>
+    <h3>Grupos de rutas</h3>
+    <pre><code class="plaintext" data-trim contenteditable>
+app/
+├── (marketing)
+│   ├── about/
+│   │   └── page.tsx
+│   └── contact/
+│       └── page.tsx
+├── (shop)
+│   ├── products/
+│   │   └── page.tsx
+│   └── cart/
+│       └── page.tsx
+└── layout.tsx
+    </code></pre>
+</section>
+
+
+<section>
+    <h3>Resumen: Ventajas del App Router</h3>
+    <ul>
+        <li>Estructura más intuitiva y flexible 🧠</li>
+        <li>Mejor rendimiento con componentes de servidor por defecto 🚀</li>
+        <li>Layouts anidados para una UI más modular 🧩</li>
+        <li>Carga parcial para una navegación más rápida ⚡</li>
+        <li>Mejor soporte para rutas dinámicas y generación estática 🔄</li>
+        <li>Grupos de rutas para una mejor organización del código 📁</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Layouts en App Router 🖼️</h2>
+    <ul>
+        <li>Concepto de layouts</li>
+        <li>Root Layout</li>
+        <li>Layouts anidados</li>
+        <li>Layouts condicionales</li>
+    </ul>
+</section>
+
+<section>
+    <h3>Concepto de layouts</h3>
+    <img src="https://nextjs.org/_next/image?url=%2Fdocs%2Fdark%2Fnested-layout.png&w=3840&q=75"
+         alt="Diagrama de layouts anidados" style="width: 60%;">
+    <p><small>Fuente: Documentación oficial de Next.js</small></p>
+</section>
+
+
+<section>
+    <h3>Root Layout</h3>
+    <pre><code class="typescript" data-trim contenteditable>
+// app/layout.tsx
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    &lt;html lang="es"&gt;
+      &lt;body&gt;
+        &lt;header&gt;
+          &lt;nav&gt;{/* Navegación global */}&lt;/nav&gt;
+        &lt;/header&gt;
+        &lt;main&gt;{children}&lt;/main&gt;
+        &lt;footer&gt;{/* Pie de página global */}&lt;/footer&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+  )
+}
+    </code></pre>
+</section>
+
+<section>
+    <h3>Layouts anidados</h3>
+    <div style="display: flex; justify-content: space-between;">
+        <pre><code class="plaintext" data-trim contenteditable style="font-size: 0.7em;">
+app/
+├── layout.tsx
+├── dashboard/
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── settings/
+│       ├── layout.tsx
+│       └── page.tsx
+        </code></pre>
+        <pre><code class="typescript" data-trim contenteditable style="font-size: 0.7em;">
+// app/dashboard/layout.tsx
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    &lt;div&gt;
+      &lt;nav&gt;{/* Navegación del dashboard */}&lt;/nav&gt;
+      {children}
+    &lt;/div&gt;
+  )
+}
+        </code></pre>
+    </div>
+</section>
+
+
+<section>
+    <h3>Ejemplo de layout compartido</h3>
+    <pre><code class="typescript" data-trim contenteditable>
+// app/(shop)/layout.tsx
+export default function ShopLayout({ children }: { children: React.ReactNode }) {
+  return (
+    &lt;div&gt;
+      &lt;nav&gt;
+        &lt;a href="/products"&gt;Products&lt;/a&gt;
+        &lt;a href="/cart"&gt;Cart&lt;/a&gt;
+      &lt;/nav&gt;
+      &lt;main&gt;{children}&lt;/main&gt;
+      &lt;footer&gt;© 2024 Our Shop&lt;/footer&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+</section>
+
+<section>
+    <h3>Layouts condicionales</h3>
+    <pre><code class="typescript" data-trim contenteditable>
+// app/[lang]/layout.tsx
+export default function ConditionalLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode
+  params: { lang: string }
+}) {
+  return (
+    &lt;div&gt;
+      {params.lang === 'es' ? (
+        &lt;nav&gt;{/* Navegación en español */}&lt;/nav&gt;
+      ) : (
+        &lt;nav&gt;{/* Navegación en inglés */}&lt;/nav&gt;
+      )}
+      {children}
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+</section>
+
+
+<section>
+    <h3>Resumen: Layouts en App Router</h3>
+    <ul>
+        <li>Permiten UI compartida y persistente 🔁</li>
+        <li>Se anidan automáticamente 🎢</li>
+        <li>No re-renderizan en navegación 🚀</li>
+        <li>Pueden ser condicionales 🔀</li>
+        <li>Pueden obtener datos 📊</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Manejo de Metadatos y SEO en App Router 🔍</h2>
+    <ul>
+        <li>Introducción a Metadata API</li>
+        <li>generateMetadata Function</li>
+        <li>Open Graph y Twitter Cards</li>
+        <li>robots.txt y sitemap.xml</li>
+    </ul>
+</section>
+
+<section>
+    <h3>Introducción a Metadata API</h3>
+    <pre><code class="typescript" data-trim contenteditable>
+// app/layout.tsx
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Mi Aplicación Next.js',
+  description: 'Creada con App Router y optimizada para SEO',
+  keywords: ['Next.js', 'React', 'JavaScript'],
+}
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    &lt;html lang="es"&gt;
+      &lt;body&gt;{children}&lt;/body&gt;
+    &lt;/html&gt;
+  )
+}
+    </code></pre>
+</section>
+
+
+<section>
+    <h3>generateMetadata Function</h3>
+    <pre><code class="typescript" data-trim contenteditable>
+// app/blog/[slug]/page.tsx
+import type { Metadata } from 'next'
+
+type Props = {
+  params: { slug: string }
+}
+
+export async function generateMetadata({ params }: Props): Promise&lt;Metadata&gt; {
+  const post = await getPost(params.slug)
+
+  return {
+    title: post.title,
+    description: post.excerpt,
+  }
+}
+
+export default function BlogPost({ params }: Props) {
+  // ...
+}
+    </code></pre>
+</section>
+
+<section>
+    <h3>Open Graph y Twitter Cards</h3>
+    <pre><code class="typescript" data-trim contenteditable>
+export const metadata: Metadata = {
+  openGraph: {
+    title: 'Mi Increíble Aplicación',
+    description: 'La mejor app que jamás hayas visto',
+    images: [
+      {
+        url: 'https://example.com/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Og Image Alt',
+      }
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Mi Increíble Aplicación',
+    description: 'La mejor app que jamás hayas visto',
+    images: ['https://example.com/og-image.jpg'],
+    creator: '@miusuario',
+  },
+}
+    </code></pre>
+</section>
+
+<section>
+    <h3>robots.txt y sitemap.xml</h3>
+    <pre><code class="typescript" data-trim contenteditable>
+// app/robots.ts
+import { MetadataRoute } from 'next'
+
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: {
+      userAgent: '*',
+      allow: '/',
+      disallow: '/private/',
+    },
+    sitemap: 'https://example.com/sitemap.xml',
+  }
+}
+
+// app/sitemap.ts
+import { MetadataRoute } from 'next'
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  return [
+    {
+      url: 'https://example.com',
+      lastModified: new Date(),
+    },
+    {
+      url: 'https://example.com/about',
+      lastModified: new Date(),
+    },
+    // ...
+  ]
+}
+    </code></pre>
+</section>
+
+
+<section>
+    <h3>Probando Metadatos con ngrok</h3>
+    <ol>
+        <li>Instalar ngrok: <code>npm install -g ngrok</code></li>
+        <li>Iniciar tu aplicación Next.js: <code>npm run dev</code></li>
+        <li>En otra terminal, iniciar ngrok: <code>ngrok http 3000</code></li>
+        <li>Usar la URL proporcionada por ngrok para probar</li>
+    </ol>
+    <p>Herramientas útiles para probar:</p>
+    <ul>
+        <li>Facebook Sharing Debugger</li>
+        <li>Twitter Card Validator</li>
+        <li>LinkedIn Post Inspector</li>
+    </ul>
+</section>
+
+<section>
+    <h3>Resumen: Metadatos y SEO en App Router</h3>
+    <ul>
+        <li>Metadata API para definición declarativa 📝</li>
+        <li>generateMetadata para metadatos dinámicos 🔄</li>
+        <li>Soporte integrado para Open Graph y Twitter Cards 🐦</li>
+        <li>Generación dinámica de robots.txt y sitemap.xml 🤖</li>
+        <li>Fácil de probar con herramientas como ngrok 🧪</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Loading UI y Streaming en App Router ⏳</h2>
+    <ul>
+        <li>Archivos loading.tsx</li>
+        <li>Suspense Boundaries</li>
+        <li>Streaming de componentes</li>
+        <li>Skeleton Loaders</li>
+    </ul>
+</section>
+
+<section>
+    <h3>Archivos loading.tsx</h3>
+    <pre><code class="typescript" data-trim contenteditable>
+// app/dashboard/loading.tsx
+export default function Loading() {
+  return (
+    &lt;div className="loading-spinner"&gt;
+      &lt;div className="spinner"&gt;&lt;/div&gt;
+      &lt;p&gt;Cargando dashboard...&lt;/p&gt;
+    &lt;/div&gt;
+  )
+}
+
+// app/dashboard/page.tsx
+import { Suspense } from 'react'
+import Loading from './loading'
+
+export default function Dashboard() {
+  return (
+    &lt;Suspense fallback=&lt;Loading/&gt;&gt;
+      {/* Contenido del dashboard */}
+    &lt;/Suspense&gt;
+  )
+}
+    </code></pre>
+</section>
+
+
+<section>
+    <h3>Suspense Boundaries</h3>
+    <img src="https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Floading-ui.png&w=3840&q=75"
+         alt="Suspense Boundaries Diagram" style="width: 70%;">
+    <p><small>Fuente: Documentación oficial de Next.js</small></p>
+</section>
+
+<section>
+    <h3>Streaming de componentes</h3>
+    <img src="https://nextjs.org/_next/image?url=%2Fdocs%2Fdark%2Fserver-rendering-with-streaming.png&w=3840&q=75"
+         alt="Streaming Components Flow" style="width: 80%;">
+    <p><small>Fuente: Documentación oficial de Next.js</small></p>
+</section>
+
+<section>
+    <h3>Skeleton Loaders</h3>
+    <pre><code class="typescript" data-trim contenteditable>
+// app/components/SkeletonCard.tsx
+export default function SkeletonCard() {
+  return (
+    &lt;div className="skeleton-card"&gt;
+      &lt;div className="skeleton-image"&gt;&lt;/div&gt;
+      &lt;div className="skeleton-title"&gt;&lt;/div&gt;
+      &lt;div className="skeleton-text"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  )
+}
+
+// app/blog/loading.tsx
+import SkeletonCard from '../components/SkeletonCard'
+
+export default function Loading() {
+  return (
+    &lt;div className="blog-grid"&gt;
+      {[...Array(6)].map((_, i) =&gt; (
+        &lt;SkeletonCard key={i}/&gt;
+      ))}
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+</section>
+
+
+<section>
+    <h3>Implementando Streaming</h3>
+    <pre><code class="typescript" data-trim contenteditable>
+// app/dashboard/page.tsx
+import { Suspense } from 'react'
+import Loading from './loading'
+
+async function SlowComponent() {
+  await new Promise(resolve =&gt; setTimeout(resolve, 2000))
+  return &lt;div&gt;Componente de carga lenta&lt;/div&gt;
+}
+
+export default function Dashboard() {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Dashboard&lt;/h1&gt;
+      &lt;Suspense fallback=&lt;Loading/&gt;&gt;
+        &lt;SlowComponent/&gt;
+      &lt;/Suspense&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+</section>
+
+<section>
+    <h3>Resumen: Loading UI y Streaming</h3>
+    <ul>
+        <li>loading.tsx para UI de carga por ruta 🛣️</li>
+        <li>Suspense Boundaries para control granular ⚛️</li>
+        <li>Streaming para mejor tiempo de carga percibido 🌊</li>
+        <li>Skeleton Loaders para mejor UX durante la carga 💀</li>
+        <li>Mejora significativa en la responsividad de la app 🚀</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Manejo de errores en App Router 🚨</h2>
+    <ul>
+        <li>Error Boundaries</li>
+        <li>Archivos error.js</li>
+        <li>Manejo de errores en rutas</li>
+        <li>not-found.js</li>
+    </ul>
+</section>
+
+<section>
+    <h3>Error Boundaries en Next.js</h3>
+    <pre><code class="typescript" data-trim contenteditable>
+'use client'
+
+import { useEffect } from 'react'
+
+export default function Error({
+  error,
+  reset,
+}: {
+  error: Error
+  reset: () =&gt; void
+}) {
+  useEffect(() =&gt; {
+    console.error(error)
+  }, [error])
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Algo salió mal!&lt;/h2&gt;
+      &lt;button onClick={() =&gt; reset()}&gt;Intentar de nuevo&lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+</section>
+
+
+<section>
+    <h3>Archivos error.js</h3>
+    <pre><code class="plaintext" data-trim contenteditable>
+app/
+├── dashboard/
+│   ├── error.js
+│   └── page.js
+└── error.js
+    </code></pre>
+    <p>Los archivos error.js crean Error Boundaries automáticamente</p>
+</section>
+
+<section>
+    <h3>Manejo de errores en rutas</h3>
+    <pre><code class="typescript" data-trim contenteditable>
+// app/dashboard/page.tsx
+import { notFound } from 'next/navigation'
+
+async function getData(id: string) {
+  const res = await fetch('https://api.example.com/data/' + id)
+  if (!res.ok) {
+    throw new Error('Failed to fetch data')
+  }
+  return res.json()
+}
+
+export default async function Page({ params }: { params: { id: string } }) {
+  const data = await getData(params.id)
+
+  if (!data) {
+    notFound()
+  }
+
+  return &lt;div&gt;{/* Render data */}&lt;/div&gt;
+}
+    </code></pre>
+</section>
+
+<section>
+    <h3>not-found.js</h3>
+    <pre><code class="typescript" data-trim contenteditable>
+// app/not-found.js
+import Link from 'next/link'
+
+export default function NotFound() {
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Página no encontrada&lt;/h2&gt;
+      &lt;p&gt;No pudimos encontrar la página que estás buscando.&lt;/p&gt;
+      &lt;Link href="/"&gt;Volver al inicio&lt;/Link&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+</section>
+
+<section>
+    <h2>Simulando Errores en Next.js 🐛</h2>
+    <pre><code class="typescript">
+&lt;!-- app/error-test/page.tsx --&gt;
+export default function ErrorTest() {
+  throw new Error('This is a simulated error');
+  return &lt;div&gt;This page should not be rendered&lt;/div&gt;;
+}
+  </code></pre>
+    <pre><code class="typescript">
+&lt;!-- app/error-test/error.tsx --&gt;
+'use client';
+
+import { useEffect } from 'react';
+
+export default function Error({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  useEffect(() => {
+    console.error(error);
+  }, [error]);
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Something went wrong!&lt;/h2&gt;
+      &lt;button onClick={() =&gt; reset()}&gt;Try again&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+  </code></pre>
+    <p>Navega a <code>/error-test</code> para ver la página de error en acción.</p>
+</section>
+
+<section>
+    <h2>Resumen 📚</h2>
+    <ul>
+        <li>App Router simplifica el enrutamiento y la estructura de la aplicación.</li>
+        <li>Los layouts permiten una composición eficiente de la UI.</li>
+        <li>Metadata API mejora el SEO y la compartibilidad en redes sociales.</li>
+        <li>Loading UI y manejo de errores mejoran la experiencia del usuario.</li>
+    </ul>
+</section>
+
+<!-- Gracias -->
+<section>
+    <h2>¡Gracias! 🙌</h2>
+    <p>¿Preguntas?</p>
+</section>

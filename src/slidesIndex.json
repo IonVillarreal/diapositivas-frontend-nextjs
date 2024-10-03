@@ -1,0 +1,54 @@
+{
+  "dias": [
+    {
+      "numero": 1,
+      "titulo": "Fundamentos de React y Introducción a Next.js",
+      "ruta": "dia1"
+    },
+    {
+      "numero": 2,
+      "titulo": "Enrutamiento y Layouts en App Router",
+      "ruta": "dia2"
+    },
+    {
+      "numero": 3,
+      "titulo": "Introducción a Material-UI (MUI)",
+      "ruta": "dia3"
+    },
+    {
+      "numero": 4,
+      "titulo": "React Hook Form y Validación Avanzada con Zod",
+      "ruta": "dia4"
+    },
+    {
+      "numero": 5,
+      "titulo": "Data Fetching y Caching en App Router",
+      "ruta": "dia5"
+    },
+    {
+      "numero": 6,
+      "titulo": "Autenticación y Autorización Básica en App Router",
+      "ruta": "dia6"
+    },
+    {
+      "numero": 7,
+      "titulo": "Introducción a TanStack Query en Next.js App Router",
+      "ruta": "dia7"
+    },
+    {
+      "numero": 8,
+      "titulo": "TanStack Query Avanzado y State Management",
+      "ruta": "dia8"
+    },
+    {
+      "numero": 9,
+      "titulo": "Optimización de Rendimiento y Técnicas Avanzadas",
+      "ruta": "dia9"
+    },
+    {
+      "numero": 10,
+      "titulo": "Despliegue y Consideraciones de Producción",
+      "ruta": "dia10"
+    }
+  ]
+}

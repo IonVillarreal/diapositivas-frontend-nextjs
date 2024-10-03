@@ -1,0 +1,1152 @@
+<!-- No incluir etiquetas <html>, <head>, <body>, ya que se asume que estás insertando esto dentro de un contenedor de slides -->
+
+<!-- Portada -->
+<section>
+    <h1><i class="devicon-materialui-plain colored icon"></i> Día 3: Introducción a Material-UI (MUI)</h1>
+    <p>Módulo de desarrollo Frontend</p>
+    <p>👨‍🏫 Docente: Imanol Villarreal</p>
+</section>
+
+<!-- Agenda -->
+<section>
+    <h2>Agenda del Día 📋</h2>
+    <ol>
+        <li>Repaso rápido del día anterior</li>
+        <li>Introducción a Material-UI</li>
+        <li>Configuración de MUI en Next.js con App Router</li>
+        <li>Sistema de Temas en MUI</li>
+        <li>Componentes Básicos de MUI</li>
+        <!--<li>Descanso</li>-->
+        <li>Grid System y Layouts Responsivos</li>
+        <li>Estilos Avanzados en MUI</li>
+    </ol>
+</section>
+
+<!-- Repaso del Día Anterior -->
+<section>
+    <h2>1. Repaso del Día Anterior 📝</h2>
+    <ul>
+        <li>Enrutamiento en App Router</li>
+        <li>Layouts en Next.js</li>
+        <li>Manejo de Metadatos y SEO</li>
+        <li>Loading UI y Manejo de Errores</li>
+    </ul>
+</section>
+
+<!-- Diapositiva de introducción -->
+<section>
+    <h2>Repaso del Día Anterior: Ejemplos de Código 📝</h2>
+    <ul>
+        <li>Enrutamiento en App Router</li>
+        <li>Layouts en Next.js</li>
+        <li>Manejo de Metadatos y SEO</li>
+        <li>Loading UI y Manejo de Errores</li>
+    </ul>
+</section>
+
+<!-- Diapositiva de Enrutamiento -->
+<section>
+    <h2>Enrutamiento en App Router</h2>
+    <pre><code class="hljs language-typescript">
+// app/blog/[slug]/page.tsx
+export default function BlogPost({ params }: { params: { slug: string } }) {
+  return &lt;h1&gt;Blog Post: {params.slug}&lt;/h1&gt;
+}
+    </code></pre>
+    <ul>
+        <li>Rutas dinámicas con parámetros</li>
+        <li>Estructura de carpetas refleja la estructura de la URL</li>
+    </ul>
+</section>
+
+<!-- Diapositiva de Layouts -->
+<section>
+    <h2>Layouts en Next.js</h2>
+    <pre><code class="hljs language-typescript">
+// app/layout.tsx
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    &lt;html lang="en"&gt;
+      &lt;body&gt;
+        &lt;header&gt;Mi Sitio&lt;/header&gt;
+        {children}
+        &lt;footer&gt;© 2023&lt;/footer&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+  )
+}
+    </code></pre>
+    <ul>
+        <li>Layout raíz aplicado a todas las páginas</li>
+        <li>Layouts anidados para secciones específicas</li>
+    </ul>
+</section>
+
+<!-- Diapositiva de Metadatos y SEO -->
+<section>
+    <h2>Manejo de Metadatos y SEO</h2>
+    <pre><code class="hljs language-typescript">
+// app/page.tsx
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Mi Página Inicio',
+  description: 'Bienvenido a mi sitio web',
+}
+
+export default function Home() {
+  return &lt;h1&gt;Bienvenido&lt;/h1&gt;
+}
+    </code></pre>
+    <ul>
+        <li>Metadata exportada para cada página</li>
+        <li>Mejora el SEO y la presentación en redes sociales</li>
+    </ul>
+</section>
+
+<!-- Diapositiva de Loading UI y Manejo de Errores -->
+<section>
+    <h2>Loading UI y Manejo de Errores</h2>
+    <pre><code class="hljs language-typescript">
+// app/dashboard/loading.tsx
+export default function Loading() {
+  return &lt;p&gt;Cargando...&lt;/p&gt;
+}
+
+// app/dashboard/error.tsx
+'use client'
+
+export default function Error({ error, reset }: { error: Error, reset: () => void }) {
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Algo salió mal&lt;/h2&gt;
+      &lt;button onClick={() => reset()}&gt;Intentar de nuevo&lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+    <ul>
+        <li>UI de carga para mejorar la experiencia del usuario</li>
+        <li>Manejo de errores personalizado por ruta</li>
+    </ul>
+</section>
+
+<!-- Introducción a Material-UI -->
+<section>
+    <h2>2. Introducción a Material-UI 🎨</h2>
+    <p>Biblioteca de componentes React que implementa Material Design de Google.</p>
+    <p>
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/materialui/materialui-plain.svg"
+             alt="Material-UI Logo"
+             style="width: 200px; margin-top: 20px;">
+    </p>
+    <ul>
+        <li>Componentes pre-diseñados y personalizables 🧩</li>
+        <li>Sistema de temas potente 🎨</li>
+        <li>Implementación fiel de Material Design 🖌️</li>
+        <li>Soporte para TypeScript 📘</li>
+        <li>Integración sencilla con React y Next.js ⚛️</li>
+    </ul>
+    <!-- Logo de Material-UI -->
+</section>
+
+<!-- Ventajas de usar MUI -->
+<section>
+    <h2>Ventajas de usar MUI 🚀</h2>
+    <ul>
+        <li>Acelera el desarrollo con componentes listos para usar ⏱️</li>
+        <li>Experiencia de usuario consistente y familiar 😊</li>
+        <li>Altamente personalizable 🎨</li>
+        <li>Gran comunidad y documentación 📚</li>
+    </ul>
+</section>
+
+<!-- Comparación con otras bibliotecas -->
+<section>
+    <h2>Comparación con otras bibliotecas ⚖️</h2>
+    <ul>
+        <li><strong>Bootstrap</strong>: Más general, no específico de React</li>
+        <li><strong>Chakra UI</strong>: Más ligero, enfoque en accesibilidad</li>
+        <li><strong>Tailwind CSS</strong>: Utilidades CSS, mayor flexibilidad</li>
+    </ul>
+</section>
+
+<!-- Configuración de MUI en Next.js -->
+<section>
+    <h2>3. Configuración de MUI en Next.js ⚙️</h2>
+    <p>Instalación de dependencias:</p>
+    <pre><code class="hljs language-bash">
+npm install @mui/material @emotion/react @emotion/styled
+  </code></pre>
+    <p>Configuración en <code>app/layout.tsx</code>:</p>
+    <pre><code class="hljs language-typescript">
+import { ReactNode } from 'react';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import theme from './theme';
+
+interface RootLayoutProps {
+  children: ReactNode;
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
+  return (
+    &lt;html lang="es"&gt;
+      &lt;body&gt;
+        &lt;ThemeProvider theme={theme}&gt;
+          &lt;CssBaseline /&gt;
+          {children}
+        &lt;/ThemeProvider&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+  );
+}
+  </code></pre>
+</section>
+
+<!-- Sistema de Temas en MUI -->
+<section>
+    <h2>4. Sistema de Temas en MUI 🎨</h2>
+    <ul>
+        <li>Creación de un tema personalizado 🛠️</li>
+        <li>Paleta de colores 🌈</li>
+        <li>Tipografía ✍️</li>
+        <li>Breakpoints 📐</li>
+        <li>Sobrescritura de estilos de componentes 🎨</li>
+    </ul>
+</section>
+
+<!-- Ejemplo de Tema Personalizado -->
+<section>
+    <h2>Ejemplo de Tema Personalizado 🌟</h2>
+    <pre><code class="hljs language-typescript">
+import { createTheme } from '@mui/material/styles';
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1976d2', // Azul
+    },
+    secondary: {
+      main: '#dc004e', // Rojo
+    },
+  },
+  typography: {
+    fontFamily: 'Roboto, Arial, sans-serif',
+    h1: {
+      fontSize: '2.5rem',
+      fontWeight: 500,
+    },
+  },
+});
+
+export default theme;
+    </code></pre>
+</section>
+
+<!-- Componentes Básicos de MUI -->
+<section>
+    <h2>5. Componentes Básicos de MUI 🧩</h2>
+    <ul>
+        <li>AppBar y Toolbar 🛠️</li>
+        <li>Button y IconButton 🔘</li>
+        <li>TextField y FormControl 📝</li>
+        <li>Card y CardContent 📇</li>
+    </ul>
+</section>
+
+<!-- Ejemplo de AppBar -->
+<section>
+    <h2>Ejemplo de AppBar 🚀</h2>
+    <pre><code class="hljs language-typescript">
+import { AppBar, Toolbar, Typography, Button } from '@mui/material';
+
+export default function AppBarExample() {
+  return (
+    &lt;AppBar position="static"&gt;
+      &lt;Toolbar&gt;
+        &lt;Typography variant="h6" sx={{ flexGrow: 1 }}&gt;
+          🌟 Mi Aplicación
+        &lt;/Typography&gt;
+        &lt;Button color="inherit"&gt;Login&lt;/Button&gt;
+      &lt;/Toolbar&gt;
+    &lt;/AppBar&gt;
+  );
+}
+    </code></pre>
+</section>
+
+<!-- Grid System y Layouts Responsivos -->
+<section>
+    <h2>6. Grid System y Layouts Responsivos 🌐</h2>
+    <ul>
+        <li>Container, Grid y Box 📦</li>
+        <li>Sistema de 12 columnas 🧮</li>
+        <li>Breakpoints y diseño responsivo 📱</li>
+        <li>Uso de Flexbox con MUI 📏</li>
+    </ul>
+</section>
+
+<!-- Introducción -->
+<section>
+    <h2>Definiciones</h2>
+    <ul>
+        <li>Container: Componente para centrar y limitar el ancho del contenido</li>
+        <li>Grid: Sistema flexible para crear layouts responsivos</li>
+    </ul>
+</section>
+
+<!-- Container Básico -->
+<section>
+    <h2>Container Básico</h2>
+    <pre><code class="hljs language-jsx">
+import { Container, Typography } from '@mui/material';
+
+function BasicContainer() {
+  return (
+    &lt;Container&gt;
+      &lt;Typography&gt;Este contenido está dentro de un Container&lt;/Typography&gt;
+    &lt;/Container&gt;
+  );
+}
+    </code></pre>
+    <p>El Container centra el contenido horizontalmente y aplica un ancho máximo.</p>
+</section>
+
+<!-- Container con Tamaños -->
+<section>
+    <h2>Container con Tamaños</h2>
+    <pre><code class="hljs language-jsx">
+import { Container, Typography } from '@mui/material';
+
+function ContainerSizes() {
+  return (
+    &lt;&gt;
+      &lt;Container maxWidth="xs" style={{ backgroundColor: '#e0f7fa', padding: '16px', margin: '8px 0' }}&gt;
+        &lt;Typography&gt;Extra Small Container&lt;/Typography&gt;
+      &lt;/Container&gt;
+      &lt;Container maxWidth="sm" style={{ backgroundColor: '#b2ebf2', padding: '16px', margin: '8px 0' }}&gt;
+        &lt;Typography&gt;Small Container&lt;/Typography&gt;
+      &lt;/Container&gt;
+      &lt;Container maxWidth="md" style={{ backgroundColor: '#80deea', padding: '16px', margin: '8px 0' }}&gt;
+        &lt;Typography&gt;Medium Container&lt;/Typography&gt;
+      &lt;/Container&gt;
+      &lt;Container maxWidth="lg" style={{ backgroundColor: '#4dd0e1', padding: '16px', margin: '8px 0' }}&gt;
+        &lt;Typography&gt;Large Container&lt;/Typography&gt;
+      &lt;/Container&gt;
+      &lt;Container maxWidth="xl" style={{ backgroundColor: '#26c6da', padding: '16px', margin: '8px 0' }}&gt;
+        &lt;Typography&gt;Extra Large Container&lt;/Typography&gt;
+      &lt;/Container&gt;
+    &lt;/&gt;
+  );
+}
+  </code></pre>
+    <p>Los Containers pueden tener diferentes tamaños máximos: xs, sm, md, lg, xl.</p>
+</section>
+
+<!-- Grid Básico -->
+<section>
+    <h2>Grid con Colores Personalizados</h2>
+    <pre><code class="hljs language-jsx">
+import { Grid, Paper, Typography } from '@mui/material';
+
+export function BasicGrid() {
+  return (
+    &lt;Grid container spacing={2}&gt;
+      &lt;Grid item xs={12} sm={6} md={4}&gt;
+        &lt;Paper style={{ backgroundColor: '#f0f4c3', padding: '16px' }}&gt;
+          &lt;Typography&gt;Item 1&lt;/Typography&gt;
+        &lt;/Paper&gt;
+      &lt;/Grid&gt;
+      &lt;Grid item xs={12} sm={6} md={4}&gt;
+        &lt;Paper style={{ backgroundColor: '#ffe082', padding: '16px' }}&gt;
+          &lt;Typography&gt;Item 2&lt;/Typography&gt;
+        &lt;/Paper&gt;
+      &lt;/Grid&gt;
+      &lt;Grid item xs={12} sm={6} md={4}&gt;
+        &lt;Paper style={{ backgroundColor: '#ffccbc', padding: '16px' }}&gt;
+          &lt;Typography&gt;Item 3&lt;/Typography&gt;
+        &lt;/Paper&gt;
+      &lt;/Grid&gt;
+    &lt;/Grid&gt;
+  );
+}
+  </code></pre>
+</section>
+
+<!-- Grid con Breakpoints -->
+<section>
+    <h2>Grid con Breakpoints</h2>
+    <pre><code class="hljs language-jsx">
+import { Grid, Paper, Typography } from '@mui/material';
+
+function GridBreakpoints() {
+  return (
+    &lt;Grid container spacing={2}&gt;
+      &lt;Grid item xs={12} sm={6} md={4} lg={3}&gt;
+        &lt;Paper style={{ backgroundColor: '#ffccbc', padding: '16px' }}&gt;
+          &lt;Typography&gt;xs=12 sm=6 md=4 lg=3&lt;/Typography&gt;
+        &lt;/Paper&gt;
+      &lt;/Grid&gt;
+      &lt;Grid item xs={12} sm={6} md={4} lg={3}&gt;
+        &lt;Paper style={{ backgroundColor: '#ffe082', padding: '16px' }}&gt;
+          &lt;Typography&gt;xs=12 sm=6 md=4 lg=3&lt;/Typography&gt;
+        &lt;/Paper&gt;
+      &lt;/Grid&gt;
+      &lt;Grid item xs={12} sm={6} md={4} lg={3}&gt;
+        &lt;Paper style={{ backgroundColor: '#c5e1a5', padding: '16px' }}&gt;
+          &lt;Typography&gt;xs=12 sm=6 md=4 lg=3&lt;/Typography&gt;
+        &lt;/Paper&gt;
+      &lt;/Grid&gt;
+      &lt;Grid item xs={12} sm={6} md={4} lg={3}&gt;
+        &lt;Paper style={{ backgroundColor: '#b39ddb', padding: '16px' }}&gt;
+          &lt;Typography&gt;xs=12 sm=6 md=4 lg=3&lt;/Typography&gt;
+        &lt;/Paper&gt;
+      &lt;/Grid&gt;
+    &lt;/Grid&gt;
+  );
+}
+  </code></pre>
+    <p>Los breakpoints permiten definir diferentes layouts para distintos tamaños de pantalla.</p>
+</section>
+
+<!-- Container y Grid Juntos -->
+<section>
+    <h2>Container y Grid Juntos</h2>
+    <pre><code class="hljs language-jsx">
+import { Container, Paper, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid2';
+
+function ContainerWithGrid() {
+  return (
+    &lt;Container maxWidth="lg"&gt;
+      &lt;Grid container spacing={3}&gt;
+        &lt;Grid size={{ xs: 12, sm: 6 }}&gt;
+          &lt;Paper style={{ backgroundColor: '#ffcc80', padding: '16px' }}&gt;
+            &lt;Typography&gt;Contenido 1&lt;/Typography&gt;
+          &lt;/Paper&gt;
+        &lt;/Grid&gt;
+        &lt;Grid size={{ xs: 12, sm: 6 }}&gt;
+          &lt;Paper style={{ backgroundColor: '#ffab91', padding: '16px' }}&gt;
+            &lt;Typography&gt;Contenido 2&lt;/Typography&gt;
+          &lt;/Paper&gt;
+        &lt;/Grid&gt;
+      &lt;/Grid&gt;
+    &lt;/Container&gt;
+  );
+}
+  </code></pre>
+    <p>Combinar <code>Container</code> y <code>Grid</code> permite crear layouts centrados y responsivos en MUI 6.</p>
+</section>
+
+<section>
+    <h2>Grid con Breakpoints usando Grid en MUI 6</h2>
+    <pre><code class="hljs language-jsx">
+import { Paper, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid2';
+
+function GridBreakpoints() {
+  return (
+    &lt;Grid container spacing={2}&gt;
+      &lt;Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}&gt;
+        &lt;Paper style={{ backgroundColor: '#ffccbc', padding: '16px' }}&gt;
+          &lt;Typography&gt;xs=12 sm=6 md=4 lg=3&lt;/Typography&gt;
+        &lt;/Paper&gt;
+      &lt;/Grid&gt;
+      &lt;Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}&gt;
+        &lt;Paper style={{ backgroundColor: '#ffe082', padding: '16px' }}&gt;
+          &lt;Typography&gt;xs=12 sm=6 md=4 lg=3&lt;/Typography&gt;
+        &lt;/Paper&gt;
+      &lt;/Grid&gt;
+      &lt;Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}&gt;
+        &lt;Paper style={{ backgroundColor: '#c5e1a5', padding: '16px' }}&gt;
+          &lt;Typography&gt;xs=12 sm=6 md=4 lg=3&lt;/Typography&gt;
+        &lt;/Paper&gt;
+      &lt;/Grid&gt;
+      &lt;Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}&gt;
+        &lt;Paper style={{ backgroundColor: '#b39ddb', padding: '16px' }}&gt;
+          &lt;Typography&gt;xs=12 sm=6 md=4 lg=3&lt;/Typography&gt;
+        &lt;/Paper&gt;
+      &lt;/Grid&gt;
+    &lt;/Grid&gt;
+  );
+}
+  </code></pre>
+</section>
+
+<!-- Grid Anidado -->
+<section>
+    <h2>Grid Anidado con Grid2 (MUI 6)</h2>
+    <pre><code class="hljs language-jsx">
+import { Paper, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid2';
+
+function NestedGrid() {
+  return (
+    &lt;Grid container spacing={2}&gt;
+      &lt;Grid size={{ xs: 12, sm: 6 }}&gt;
+        &lt;Paper style={{ backgroundColor: '#b3e5fc', padding: '16px' }}&gt;
+          &lt;Typography&gt;Item Principal 1&lt;/Typography&gt;
+          &lt;Grid container spacing={1}&gt;
+            &lt;Grid size={{ xs: 6 }}&gt;
+              &lt;Paper style={{ backgroundColor: '#81d4fa', padding: '8px' }}&gt;
+                &lt;Typography&gt;Subitem 1&lt;/Typography&gt;
+              &lt;/Paper&gt;
+            &lt;/Grid&gt;
+            &lt;Grid size={{ xs: 6 }}&gt;
+              &lt;Paper style={{ backgroundColor: '#4fc3f7', padding: '8px' }}&gt;
+                &lt;Typography&gt;Subitem 2&lt;/Typography&gt;
+              &lt;/Paper&gt;
+            &lt;/Grid&gt;
+          &lt;/Grid&gt;
+        &lt;/Paper&gt;
+      &lt;/Grid&gt;
+      &lt;Grid size={{ xs: 12, sm: 6 }}&gt;
+        &lt;Paper style={{ backgroundColor: '#ffab91', padding: '16px' }}&gt;
+          &lt;Typography&gt;Item Principal 2&lt;/Typography&gt;
+        &lt;/Paper&gt;
+      &lt;/Grid&gt;
+    &lt;/Grid&gt;
+  );
+}
+  </code></pre>
+</section>
+
+<!-- Grid con Alineación -->
+<section>
+    <h2>Grid con Alineación usando Grid2</h2>
+    <pre><code class="hljs language-jsx">
+import { Paper, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid2';
+
+function AlignedGrid() {
+  return (
+    &lt;Grid
+      container
+      spacing={2}
+      direction="row"
+      justifyContent="center"
+      alignItems="center"
+      style={{ minHeight: '100vh' }}
+    &gt;
+      &lt;Grid size={{ xs: 4 }}&gt;
+        &lt;Paper style={{ backgroundColor: '#ffcc80', padding: '16px' }}&gt;
+          &lt;Typography&gt;Centrado 1&lt;/Typography&gt;
+        &lt;/Paper&gt;
+      &lt;/Grid&gt;
+      &lt;Grid size={{ xs: 4 }}&gt;
+        &lt;Paper style={{ backgroundColor: '#ffe082', padding: '16px' }}&gt;
+          &lt;Typography&gt;Centrado 2&lt;/Typography&gt;
+        &lt;/Paper&gt;
+      &lt;/Grid&gt;
+    &lt;/Grid&gt;
+  );
+}
+  </code></pre>
+    <p><code>Grid</code> ofrece propiedades como <code>justifyContent</code> y <code>alignItems</code> para alinear y
+        distribuir los elementos.</p>
+</section>
+
+<!-- Container Fluido -->
+<section>
+    <h2>Container Fluido</h2>
+    <pre><code class="hljs language-jsx">
+import { Container, Typography } from '@mui/material';
+
+function FluidContainer() {
+  return (
+    &lt;Container maxWidth={false}&gt;
+      &lt;Typography&gt;
+        Este Container ocupa todo el ancho disponible
+      &lt;/Typography&gt;
+    &lt;/Container&gt;
+  );
+}
+    </code></pre>
+    <p>Un Container fluido (maxWidth={false}) ocupa todo el ancho disponible.</p>
+</section>
+
+<!-- Grid con Orden -->
+<section>
+    <h2>Grid con Orden usando Grid2</h2>
+    <pre><code class="hljs language-jsx">
+import { Paper, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid2';
+
+function OrderedGrid() {
+  return (
+    &lt;Grid container spacing={2}&gt;
+      &lt;Grid size={{ xs: 12, sm: 4 }} order={{ xs: 3, sm: 1 }}&gt;
+        &lt;Paper style={{ backgroundColor: '#b3e5fc', padding: '16px' }}&gt;
+          &lt;Typography&gt;Primero en SM, Tercero en XS&lt;/Typography&gt;
+        &lt;/Paper&gt;
+      &lt;/Grid&gt;
+      &lt;Grid size={{ xs: 12, sm: 4 }} order={{ xs: 1, sm: 2 }}&gt;
+        &lt;Paper style={{ backgroundColor: '#81d4fa', padding: '16px' }}&gt;
+          &lt;Typography&gt;Segundo en SM, Primero en XS&lt;/Typography&gt;
+        &lt;/Paper&gt;
+      &lt;/Grid&gt;
+      &lt;Grid size={{ xs: 12, sm: 4 }} order={{ xs: 2, sm: 3 }}&gt;
+        &lt;Paper style={{ backgroundColor: '#4fc3f7', padding: '16px' }}&gt;
+          &lt;Typography&gt;Tercero en SM, Segundo en XS&lt;/Typography&gt;
+        &lt;/Paper&gt;
+      &lt;/Grid&gt;
+    &lt;/Grid&gt;
+  );
+}
+  </code></pre>
+    <p>La propiedad <code>order</code> permite cambiar el orden de los elementos según el breakpoint usando
+        <code>Grid2</code> en MUI 6.</p>
+</section>
+
+<!-- Introducción a campos de formulario -->
+<section>
+    <h2>Formularios con MUI</h2>
+    <ul>
+        <li>Material-UI ofrece componentes de formulario ricos en características</li>
+        <li>Diseño consistente y personalizable</li>
+        <li>Integración sencilla con bibliotecas de manejo de formularios</li>
+        <li>Accesibilidad incorporada</li>
+    </ul>
+</section>
+
+<!-- TextField -->
+<section>
+    <h2>TextField</h2>
+    <p>Componente versátil para entrada de texto</p>
+    <pre><code class="hljs language-jsx">
+import { TextField } from '@mui/material';
+
+function TextFieldExample() {
+  return (
+    &lt;&gt;
+      &lt;TextField label="Nombre" variant="outlined" /&gt;
+      &lt;TextField label="Email" type="email" variant="filled" /&gt;
+      &lt;TextField label="Contraseña" type="password" variant="standard" /&gt;
+    &lt;/&gt;
+  );
+}
+    </code></pre>
+    <p>Variantes: outlined, filled, standard</p>
+</section>
+
+<!-- Select -->
+<section>
+    <h2>Select</h2>
+    <p>Para seleccionar una opción de una lista</p>
+    <pre><code class="hljs language-jsx">
+import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
+
+function SelectExample() {
+  return (
+    &lt;FormControl fullWidth&gt;
+      &lt;InputLabel&gt;Edad&lt;/InputLabel&gt;
+      &lt;Select label="Edad" defaultValue={20}&gt;
+        &lt;MenuItem value={10}&gt;Diez&lt;/MenuItem&gt;
+        &lt;MenuItem value={20}&gt;Veinte&lt;/MenuItem&gt;
+        &lt;MenuItem value={30}&gt;Treinta&lt;/MenuItem&gt;
+      &lt;/Select&gt;
+    &lt;/FormControl&gt;
+  );
+}
+    </code></pre>
+</section>
+
+<!-- Checkbox -->
+<section>
+    <h2>Checkbox</h2>
+    <p>Para selecciones múltiples o confirmaciones</p>
+    <pre><code class="hljs language-jsx">
+import { Checkbox, FormControlLabel } from '@mui/material';
+
+function CheckboxExample() {
+  return (
+    &lt;&gt;
+      &lt;FormControlLabel
+        control={&lt;Checkbox defaultChecked /&gt;}
+        label="Opción 1"
+      /&gt;
+      &lt;FormControlLabel
+        control={&lt;Checkbox /&gt;}
+        label="Opción 2"
+      /&gt;
+    &lt;/&gt;
+  );
+}
+    </code></pre>
+</section>
+
+<!-- Radio Buttons -->
+<section>
+    <h2>Radio Buttons</h2>
+    <p>Para selección única entre opciones</p>
+    <pre><code class="hljs language-jsx">
+import { Radio, RadioGroup, FormControlLabel, FormControl, FormLabel } from '@mui/material';
+
+function RadioExample() {
+  return (
+    &lt;FormControl&gt;
+      &lt;FormLabel&gt;Género&lt;/FormLabel&gt;
+      &lt;RadioGroup defaultValue="female" name="gender"&gt;
+        &lt;FormControlLabel value="female" control={&lt;Radio /&gt;} label="Femenino" /&gt;
+        &lt;FormControlLabel value="male" control={&lt;Radio /&gt;} label="Masculino" /&gt;
+        &lt;FormControlLabel value="other" control={&lt;Radio /&gt;} label="Otro" /&gt;
+      &lt;/RadioGroup&gt;
+    &lt;/FormControl&gt;
+  );
+}
+    </code></pre>
+</section>
+
+<!-- Switch -->
+<section>
+    <h2>Switch</h2>
+    <p>Para alternar entre dos estados</p>
+    <pre><code class="hljs language-jsx">
+import { Switch, FormControlLabel } from '@mui/material';
+
+function SwitchExample() {
+  return (
+    &lt;FormControlLabel
+      control={&lt;Switch defaultChecked /&gt;}
+      label="Notificaciones"
+    /&gt;
+  );
+}
+    </code></pre>
+</section>
+
+<!-- Slider -->
+<section>
+    <h2>Slider</h2>
+    <p>Para seleccionar un valor en un rango</p>
+    <pre><code class="hljs language-jsx">
+import { Slider, Typography } from '@mui/material';
+
+function SliderExample() {
+  return (
+    &lt;&gt;
+      &lt;Typography&gt;Volumen&lt;/Typography&gt;
+      &lt;Slider
+        defaultValue={30}
+        aria-label="Volumen"
+        valueLabelDisplay="auto"
+        step={10}
+        marks
+        min={0}
+        max={100}
+      /&gt;
+    &lt;/&gt;
+  );
+}
+    </code></pre>
+</section>
+
+<!-- DatePicker -->
+<section>
+    <h2>DatePicker</h2>
+    <p>Para seleccionar fechas (requiere @mui/x-date-pickers)</p>
+    <pre><code class="hljs language-jsx">
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+
+function DatePickerExample() {
+  return (
+    &lt;LocalizationProvider dateAdapter={AdapterDateFns}&gt;
+      &lt;DatePicker label="Fecha de nacimiento" /&gt;
+    &lt;/LocalizationProvider&gt;
+  );
+}
+    </code></pre>
+</section>
+
+<!-- Formulario Completo -->
+<section>
+    <h2>Formulario Completo</h2>
+    <p>Ejemplo de un formulario combinando varios elementos</p>
+    <pre><code class="hljs language-jsx">
+import { TextField, Button, FormControlLabel, Checkbox, Grid } from '@mui/material';
+
+function CompleteForm() {
+  return (
+    &lt;form&gt;
+      &lt;Grid container spacing={2}&gt;
+        &lt;Grid item xs={12} sm={6}&gt;
+          &lt;TextField fullWidth label="Nombre" variant="outlined" /&gt;
+        &lt;/Grid&gt;
+        &lt;Grid item xs={12} sm={6}&gt;
+          &lt;TextField fullWidth label="Apellido" variant="outlined" /&gt;
+        &lt;/Grid&gt;
+        &lt;Grid item xs={12}&gt;
+          &lt;TextField fullWidth label="Email" type="email" variant="outlined" /&gt;
+        &lt;/Grid&gt;
+        &lt;Grid item xs={12}&gt;
+          &lt;FormControlLabel
+            control={&lt;Checkbox /&gt;}
+            label="Acepto los términos y condiciones"
+          /&gt;
+        &lt;/Grid&gt;
+        &lt;Grid item xs={12}&gt;
+          &lt;Button type="submit" variant="contained" color="primary"&gt;
+            Registrarse
+          &lt;/Button&gt;
+        &lt;/Grid&gt;
+      &lt;/Grid&gt;
+    &lt;/form&gt;
+  );
+}
+    </code></pre>
+</section>
+
+<!-- Estilos Avanzados en MUI -->
+<section>
+    <h2>7. Estilos Avanzados en MUI 🎨</h2>
+    <ul>
+        <li><code>styled</code> API 🖌️</li>
+        <li>Propiedad <code>sx</code> 🧩</li>
+        <li>Customización de componentes 🛠️</li>
+    </ul>
+</section>
+
+<!-- Ejemplo de styled API -->
+<section>
+    <h2>Ejemplo de <code>styled</code> API 🖌️</h2>
+    <pre><code class="hljs language-typescript">
+import { styled } from '@mui/material/styles';
+import Button from '@mui/material/Button';
+
+const CustomButton = styled(Button)(({ theme }) => ({
+  color: theme.palette.getContrastText(theme.palette.secondary.main),
+  backgroundColor: theme.palette.secondary.main,
+  '&:hover': {
+    backgroundColor: theme.palette.secondary.dark,
+  },
+  padding: theme.spacing(2),
+  borderRadius: theme.shape.borderRadius * 2,
+}));
+
+export default function StyledButton() {
+  return &lt;CustomButton&gt;🎨 Botón Personalizado&lt;/CustomButton&gt;;
+}
+    </code></pre>
+</section>
+
+<!-- Resumen -->
+
+<section>
+    <h2>Ejemplo: Landing Page 📋</h2>
+    <ol>
+        <li>Estructura de la Landing Page</li>
+        <li>Header y Navegación</li>
+        <li>Sección Hero con Llamada a la Acción</li>
+        <li>Catálogo de Productos</li>
+        <li>Formulario de Pedido</li>
+        <li>Sección de Testimonios</li>
+        <li>Footer y Contacto</li>
+    </ol>
+</section>
+
+<!-- Estructura de la Landing Page -->
+<section>
+    <h2>1. Estructura de la Landing Page 🏗️</h2>
+    <pre><code class="hljs language-typescript">
+// app/page.tsx
+import Header from '../components/Header';
+import Hero from '../components/Hero';
+import ProductCatalog from '../components/ProductCatalog';
+import OrderForm from '../components/OrderForm';
+import Testimonials from '../components/Testimonials';
+import Footer from '../components/Footer';
+
+export default function Home() {
+  return (
+    &lt;&gt;
+      &lt;Header /&gt;
+      &lt;Hero /&gt;
+      &lt;ProductCatalog /&gt;
+      &lt;OrderForm /&gt;
+      &lt;Testimonials /&gt;
+      &lt;Footer /&gt;
+    &lt;/&gt;
+  );
+}
+    </code></pre>
+</section>
+
+<!-- Header y Navegación -->
+<section>
+    <h2>2. Header y Navegación 🧭</h2>
+    <pre><code class="hljs language-typescript">
+// components/Header.tsx
+import { AppBar, Toolbar, Typography, Button } from '@mui/material';
+
+export default function Header() {
+  return (
+    &lt;AppBar position="static"&gt;
+      &lt;Toolbar&gt;
+        &lt;Typography variant="h6" component="div" sx={{ flexGrow: 1 }}&gt;
+          MiTienda
+        &lt;/Typography&gt;
+        &lt;Button color="inherit"&gt;Productos&lt;/Button&gt;
+        &lt;Button color="inherit"&gt;Pedidos&lt;/Button&gt;
+        &lt;Button color="inherit"&gt;Contacto&lt;/Button&gt;
+      &lt;/Toolbar&gt;
+    &lt;/AppBar&gt;
+  );
+}
+    </code></pre>
+</section>
+
+<!-- Sección Hero con Llamada a la Acción -->
+<section>
+    <h2>3. Sección Hero con Llamada a la Acción 🦸‍♂️</h2>
+    <pre><code class="hljs language-typescript">
+// components/Hero.tsx
+import { Box, Typography, Button, Container } from '@mui/material';
+
+export default function Hero() {
+  return (
+    &lt;Box sx={{ bgcolor: 'background.paper', pt: 8, pb: 6 }}&gt;
+      &lt;Container maxWidth="sm"&gt;
+        &lt;Typography component="h1" variant="h2" align="center" color="text.primary" gutterBottom&gt;
+          Productos de Calidad
+        &lt;/Typography&gt;
+        &lt;Typography variant="h5" align="center" color="text.secondary" paragraph&gt;
+          Descubre nuestra selección de productos premium y haz tu pedido hoy.
+        &lt;/Typography&gt;
+        &lt;Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}&gt;
+          &lt;Button variant="contained" color="primary" size="large" href="#productos"&gt;
+            Ver Productos
+          &lt;/Button&gt;
+        &lt;/Box&gt;
+      &lt;/Container&gt;
+    &lt;/Box&gt;
+  );
+}
+    </code></pre>
+</section>
+
+<!-- Catálogo de Productos -->
+<section>
+    <h2>4. Catálogo de Productos 🛍️</h2>
+    <pre><code class="hljs language-typescript">
+// components/ProductCatalog.tsx
+import { Grid, Card, CardContent, CardMedia, Typography, Button } from '@mui/material';
+import Grid from '@mui/material/Grid2';
+
+const products = [
+  { id: 1, name: 'Plátanos', price: 19.99, image: 'https://media.istockphoto.com/id/173242750/es/foto/racimo-de-plátanos.jpg?s=1024x1024&w=is&k=20&c=NN0PRsuFsvZP7nu2B2qGhyxGvWNQdIUbTXk6rToGEaI=' },
+  { id: 2, name: 'Manzana Roja', price: 29.99, image: 'https://media.istockphoto.com/id/184276818/es/foto/manzana-red.jpg?s=1024x1024&w=is&k=20&c=RtmTsXNtkwTt5MIAkMJgfZgXXV3LYnLgq3kR0vvvVk4=' },
+];
+
+export default function ProductCatalog() {
+  return (
+    &lt;Grid container spacing={4}&gt;
+      {products.map((product) =&gt; (
+        &lt;Grid size={{ xs: 12, sm: 6, md: 4 }} key={product.id}&gt;
+          &lt;Card&gt;
+            &lt;CardMedia
+              component="img"
+              height="140"
+              image={product.image}
+              alt={product.name}
+            /&gt;
+            &lt;CardContent&gt;
+              &lt;Typography gutterBottom variant="h5" component="div"&gt;
+                {product.name}
+              &lt;/Typography&gt;
+              &lt;Typography variant="body2" color="text.secondary"&gt;
+                ${product.price}
+              &lt;/Typography&gt;
+              &lt;Button size="small" color="primary"&gt;Añadir al Carrito&lt;/Button&gt;
+            &lt;/CardContent&gt;
+          &lt;/Card&gt;
+        &lt;/Grid&gt;
+      ))}
+    &lt;/Grid&gt;
+  );
+}
+  </code></pre>
+</section>
+
+<!-- Formulario de Pedido -->
+<section>
+    <h2>5. Formulario de Pedido 📝</h2>
+    <pre><code class="hljs language-typescript">
+// components/OrderForm.tsx
+import { useState } from 'react';
+import { TextField, Button, Box, Typography } from '@mui/material';
+
+export default function OrderForm() {
+  const [order, setOrder] = useState({ name: '', email: '', product: '' });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Lógica para procesar el pedido
+    console.log('Pedido enviado:', order);
+  };
+
+  return (
+    &lt;Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}&gt;
+      &lt;Typography variant="h4" gutterBottom&gt;Hacer un Pedido&lt;/Typography&gt;
+      &lt;TextField
+        margin="normal"
+        required
+        fullWidth
+        id="name"
+        label="Nombre"
+        name="name"
+        autoComplete="name"
+        value={order.name}
+        onChange={(e) => setOrder({...order, name: e.target.value})}
+      /&gt;
+      &lt;TextField
+        margin="normal"
+        required
+        fullWidth
+        id="email"
+        label="Correo Electrónico"
+        name="email"
+        autoComplete="email"
+        value={order.email}
+        onChange={(e) => setOrder({...order, email: e.target.value})}
+      /&gt;
+      &lt;TextField
+        margin="normal"
+        required
+        fullWidth
+        id="product"
+        label="Producto"
+        name="product"
+        value={order.product}
+        onChange={(e) => setOrder({...order, product: e.target.value})}
+      /&gt;
+      &lt;Button
+        type="submit"
+        fullWidth
+        variant="contained"
+        sx={{ mt: 3, mb: 2 }}
+      &gt;
+        Enviar Pedido
+      &lt;/Button&gt;
+    &lt;/Box&gt;
+  );
+}
+    </code></pre>
+</section>
+
+<!-- Sección de Testimonios -->
+<section>
+    <h2>6. Sección de Testimonios 💬</h2>
+    <pre><code class="hljs language-typescript">
+// components/Testimonials.tsx
+import { Container, Typography, Grid, Card, CardContent, Avatar } from '@mui/material';
+import Grid from '@mui/material/Grid2';
+
+const testimonials = [
+  { id: 1, name: 'Cliente 1', comment: 'Excelentes productos y servicio rápido.' },
+  { id: 2, name: 'Cliente 2', comment: 'Muy satisfecho con mi compra. Recomendado.' },
+  // Más testimonios...
+];
+
+export default function Testimonials() {
+  return (
+    &lt;Container sx={{ py: 8 }} maxWidth="md"&gt;
+      &lt;Typography variant="h4" align="center" gutterBottom&gt;Lo que dicen nuestros clientes&lt;/Typography&gt;
+      &lt;Grid container spacing={4}&gt;
+        {testimonials.map((testimonial) =&gt; (
+          &lt;Grid size={{ xs: 12, sm: 6, md: 4 }} key={testimonial.id}&gt;
+            &lt;Card&gt;
+              &lt;CardContent&gt;
+                &lt;Avatar sx={{ bgcolor: 'primary.main', mb: 2 }}&gt;{testimonial.name[0]}&lt;/Avatar&gt;
+                &lt;Typography gutterBottom variant="h6"&gt;{testimonial.name}&lt;/Typography&gt;
+                &lt;Typography variant="body2" color="text.secondary"&gt;{testimonial.comment}&lt;/Typography&gt;
+              &lt;/CardContent&gt;
+            &lt;/Card&gt;
+          &lt;/Grid&gt;
+        ))}
+      &lt;/Grid&gt;
+    &lt;/Container&gt;
+  );
+}
+  </code></pre>
+</section>
+
+<!-- Footer y Contacto -->
+<section>
+    <h2>7. Footer y Contacto 📞</h2>
+    <pre><code class="hljs language-typescript">
+// components/Footer.tsx
+import { Box, Container, Typography, Link, Grid } from '@mui/material';
+import Grid from '@mui/material/Grid2';
+
+export default function Footer() {
+  return (
+    &lt;Box component="footer" sx={{ bgcolor: 'background.paper', py: 6 }}&gt;
+      &lt;Container maxWidth="lg"&gt;
+        &lt;Grid container spacing={4} justifyContent="space-evenly"&gt;
+          &lt;Grid size={{ xs: 12, sm: 6, md: 3 }}&gt;
+            &lt;Typography variant="h6" color="text.primary" gutterBottom&gt;
+              Contacto
+            &lt;/Typography&gt;
+            &lt;Typography variant="body2" color="text.secondary"&gt;
+              123 Calle Principal, Ciudad
+              &lt;br /&gt;
+              Email: info@mitienda.com
+              &lt;br /&gt;
+              Tel: (123) 456-7890
+            &lt;/Typography&gt;
+          &lt;/Grid&gt;
+          &lt;Grid size={{ xs: 12, sm: 6, md: 3 }}&gt;
+            &lt;Typography variant="h6" color="text.primary" gutterBottom&gt;
+              Enlaces Rápidos
+            &lt;/Typography&gt;
+            &lt;Link href="#" color="inherit" display="block"&gt;Inicio&lt;/Link&gt;
+            &lt;Link href="#" color="inherit" display="block"&gt;Productos&lt;/Link&gt;
+            &lt;Link href="#" color="inherit" display="block"&gt;Sobre Nosotros&lt;/Link&gt;
+          &lt;/Grid&gt;
+        &lt;/Grid&gt;
+        &lt;Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 5 }}&gt;
+          {'Copyright © '}
+          &lt;Link color="inherit" href="https://mitienda.com/"&gt;
+            MiTienda
+          &lt;/Link&gt;{' '}
+          {new Date().getFullYear()}
+          {'.'}
+        &lt;/Typography&gt;
+      &lt;/Container&gt;
+    &lt;/Box&gt;
+  );
+}
+  </code></pre>
+</section>
+
+<!-- Tarea -->
+<!--<section>-->
+<!--    <h2>Tarea 📝</h2>-->
+<!--    <p>Crear una página de dashboard que incluya:</p>-->
+<!--    <ul>-->
+<!--        <li>Un AppBar con navegación.</li>-->
+<!--        <li>Una Grid responsiva con al menos 3 tarjetas de resumen.</li>-->
+<!--        <li>Un formulario de búsqueda estilizado.</li>-->
+<!--        <li>Un tema personalizado.</li>-->
+<!--    </ul>-->
+<!--</section>-->
+
+<section>
+    <h2>Resumen 📚</h2>
+    <ul>
+        <li>MUI ofrece componentes pre-diseñados y un sistema de diseño flexible.</li>
+        <li>Configuración sencilla en Next.js con App Router.</li>
+        <li>Sistema de temas para personalización profunda.</li>
+        <li>Grid y Box facilitan layouts responsivos.</li>
+        <li>Estilos avanzados permiten una customización detallada.</li>
+    </ul>
+</section>
+
+<!-- Gracias -->
+<section>
+    <h2>¡Gracias! 🙌</h2>
+    <p>¿Preguntas?</p>
+</section>
