@@ -27,12 +27,12 @@ El curso cubre los siguientes temas a lo largo de 10 días:
 
 1. Clona este repositorio:
    ```
-   git clone https://github.com/tu-usuario/curso-frontend-avanzado-nextjs.git
+   git clone https://github.com/IonVillarreal/diapositivas-frontend-nextjs.git
    ```
 
 2. Navega al directorio del proyecto:
    ```
-   cd curso-frontend-avanzado-nextjs
+   cd diapositivas-frontend-nextjs.git
    ```
 
 3. Instala las dependencias:
