@@ -1,33 +1,15 @@
 import Reveal from 'reveal.js';
 import Highlight from 'reveal.js/plugin/highlight/highlight';
-import Markdown from 'reveal.js/plugin/markdown/markdown';
 import Notes from 'reveal.js/plugin/notes/notes';
 import 'reveal.js/dist/reveal.css';
 import 'reveal.js/dist/theme/white.css';
 import './styles/global.css';
-import hljs from 'highlight.js';
-import 'highlight.js/styles/monokai.css';
+import 'reveal.js/plugin/highlight/monokai.css';
 import slidesIndex from './slidesIndex.json';
 import flowchart from 'flowchart.js';
 
-// Variable global para la instancia de Reveal.js
-const deck = new Reveal({
-    hash: true,
-    plugins: [Highlight, Markdown, Notes],
-    transition: 'fade',
-    transitionSpeed: 'default',
-    backgroundTransition: 'fade',
-    center: true,
-    progress: true,
-    controls: true,
-    touch: true,
-    overview: true,
-    width: '100%',
-    height: '100%',
-    margin: 0.1,
-    minScale: 0.2,
-    maxScale: 1.5,
-});
+// Variable para la instancia de Reveal.js
+let deck: Reveal.Api;
 
 // Función para inicializar los diagramas
 function initializeDiagrams() {
@@ -50,22 +32,45 @@ function initializeDiagrams() {
 // Función para cargar las diapositivas
 async function loadSlides(day: string) {
     const response = await fetch(`./dias/${day}/diapositivas.html`);
-    document.querySelector('.slides')!.innerHTML = await response.text();
+    const slidesHtml = await response.text();
+    document.querySelector('.slides')!.innerHTML = slidesHtml;
 
     // Inicializar los diagramas después de cargar las diapositivas
     initializeDiagrams();
 
-    // Resaltar el código
-    hljs.highlightAll();
+    // Si ya existe una instancia de Reveal, la destruimos
+    if (deck) {
+        deck.destroy();
+    }
 
-    // Sincronizar Reveal.js
-    deck.sync();
+    // Inicializamos Reveal.js nuevamente
+    deck = new Reveal({
+        hash: true,
+        plugins: [Highlight, Notes],
+        transition: 'fade',
+        transitionSpeed: 'default',
+        backgroundTransition: 'fade',
+        center: true,
+        progress: true,
+        controls: true,
+        touch: true,
+        overview: true,
+        width: '100%',
+        height: '100%',
+        margin: 0.1,
+        minScale: 0.2,
+        maxScale: 1.5,
+        pdfSeparateFragments: false,
+        pdfMaxPagesPerSlide: 1,
+        pdfPageHeightOffset: -1,
+        // Elimina o comenta la siguiente línea
+        // highlight: {
+        //     theme: 'monokai',
+        // },
+    });
+
+    deck.initialize();
 }
-
-// Función para cargar un día específico
-const loadDay = async (day: string) => {
-    await loadSlides(day);
-};
 
 // Función para crear el índice
 const createIndex = async () => {
@@ -75,7 +80,7 @@ const createIndex = async () => {
             <ul>
                 ${slidesIndex.dias.map(dia => `
                     <li>
-                        <a href="#" onclick="loadDay('${dia.ruta}'); return false;">
+                        <a href="?day=${dia.ruta}">
                             Día ${dia.numero}: ${dia.titulo}
                         </a>
                     </li>
@@ -84,15 +89,54 @@ const createIndex = async () => {
         </section>
     `;
 
-    hljs.highlightAll();
-};
+    if (deck) {
+        deck.destroy();
+    }
 
-// Inicialización
-window.onload = async () => {
-    await createIndex();
+    // Inicializamos Reveal.js nuevamente para el índice
+    deck = new Reveal({
+        hash: true,
+        plugins: [Highlight, Notes],
+        transition: 'fade',
+        transitionSpeed: 'default',
+        backgroundTransition: 'fade',
+        center: true,
+        progress: true,
+        controls: true,
+        touch: true,
+        overview: true,
+        width: '100%',
+        height: '100%',
+        margin: 0.1,
+        minScale: 0.2,
+        maxScale: 1.5,
+        pdfSeparateFragments: false,
+        pdfMaxPagesPerSlide: 1,
+        pdfPageHeightOffset: -1,
+        // Elimina o comenta la siguiente línea
+        // highlight: {
+        //     theme: 'monokai',
+        // },
+    });
+
     deck.initialize();
 };
 
-// Exponer funciones globalmente
-(window as any).loadDay = loadDay;
+// Función para obtener parámetros de la URL
+function getURLParameter(name: string): string | null {
+    return new URLSearchParams(window.location.search).get(name);
+}
+
+// Inicialización
+window.onload = async () => {
+    const day = getURLParameter('day');
+    if (day) {
+        await loadSlides(day);
+    } else {
+        await createIndex();
+    }
+};
+
+// Exponer funciones globalmente (si es necesario)
+(window as any).loadDay = loadSlides;
 (window as any).showIndex = createIndex;

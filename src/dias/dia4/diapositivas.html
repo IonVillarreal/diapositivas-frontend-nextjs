@@ -1,0 +1,622 @@
+<section>
+    <h1><i class="devicon-react-original colored icon"></i> Día 4: React Hook Form y Validación Avanzada con Zod</h1>
+    <p>Módulo de desarrollo Frontend</p>
+    <p>👨‍🏫 Docente: Imanol Villarreal</p>
+</section>
+
+<!-- Agenda -->
+<section>
+    <h2>Agenda del Día 📋</h2>
+    <ol>
+        <li>Introducción a React Hook Form</li>
+        <li>Integración de Zod con React Hook Form</li>
+        <li>Configuración de Formularios Tipados</li>
+        <li>Validación Avanzada con Zod</li>
+<!--        <li>Descanso</li>-->
+        <li>Manejo de Errores Tipados y Feedback de Usuario</li>
+        <li>Resumen y Tarea</li>
+    </ol>
+</section>
+
+<!-- Introducción a React Hook Form -->
+<section>
+    <h2>1. Introducción a React Hook Form 🎣</h2>
+    <ul>
+        <li>¿Qué es React Hook Form?</li>
+        <li>Ventajas sobre otras librerías de formularios</li>
+        <li>Conceptos clave: <code>register</code>, <code>handleSubmit</code>, <code>errors</code></li>
+        <li>Rendimiento y re-renders mínimos 🚀</li>
+    </ul>
+    <!-- Logo de React -->
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React Logo"
+         style="width: 100px; margin-top: 20px;">
+</section>
+
+
+<section>
+    <h2>Ejemplo sin React Hook Form </h2>
+    <pre><code class="hljs language-typescript">
+import { useState } from 'react';
+
+type Inputs = {
+  username: string;
+};
+
+const SimpleForm = () => {
+  const [formData, setFormData] = useState&lt;Inputs&gt;({ username: '' });
+
+  const handleChange = (e: React.ChangeEvent&lt;HTMLInputElement&gt;) =&gt; {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e: React.FormEvent) =&gt; {
+    e.preventDefault();
+    console.log(formData);
+  };
+
+  return (
+    &lt;form onSubmit={handleSubmit}&gt;
+      &lt;input
+        name="username"
+        value={formData.username}
+        onChange={handleChange}
+        placeholder="Nombre de usuario"
+        required
+      /&gt;
+
+      &lt;button type="submit"&gt;Enviar&lt;/button&gt;
+    &lt;/form&gt;
+  );
+};
+  </code></pre>
+</section>
+
+<section>
+    <h2>Ejemplo simple de React Hook Form 📝</h2>
+    <pre><code class="hljs language-typescript">
+import { useForm, SubmitHandler } from 'react-hook-form';
+
+type Inputs = {
+  username: string;
+};
+
+const SimpleForm = () => {
+  const { register, handleSubmit } = useForm&lt;Inputs&gt;();
+  const onSubmit: SubmitHandler&lt;Inputs&gt; = data =&gt; console.log(data);
+
+  return (
+    &lt;form onSubmit={handleSubmit(onSubmit)}&gt;
+      &lt;input {...register('username', { required: true })} placeholder="Nombre de usuario" /&gt;
+
+      &lt;button type="submit"&gt;Enviar&lt;/button&gt;
+    &lt;/form&gt;
+  );
+};
+  </code></pre>
+</section>
+
+<!-- Ejemplo básico de React Hook Form -->
+<section>
+    <h2>Ejemplo no tan simple de React Hook Form 📝</h2>
+    <pre><code class="hljs language-typescript">
+import { useForm, SubmitHandler } from 'react-hook-form';
+
+type Inputs = {
+  email: string;
+  password: string;
+};
+
+const LoginForm = () => {
+  const { register, handleSubmit, formState: { errors } } = useForm&lt;Inputs&gt;();
+  const onSubmit: SubmitHandler&lt;Inputs&gt; = data =&gt; console.log(data);
+
+  return (
+    &lt;form onSubmit={handleSubmit(onSubmit)}&gt;
+      &lt;input {...register('email', { required: true })} /&gt;
+      {errors.email && &lt;span&gt;Este campo es requerido&lt;/span&gt;}
+
+      &lt;input type="password" {...register('password', { required: true })} /&gt;
+      {errors.password && &lt;span&gt;Este campo es requerido&lt;/span&gt;}
+
+      &lt;button type="submit"&gt;Iniciar sesión&lt;/button&gt;
+    &lt;/form&gt;
+  );
+};
+    </code></pre>
+</section>
+
+<!-- Integración de Zod con React Hook Form -->
+<section>
+    <h2>2. Integración de Zod con React Hook Form 🧩</h2>
+    <ul>
+        <li>¿Qué es Zod?</li>
+        <li>Ventajas de Zod sobre otras librerías de validación</li>
+        <li>Configuración de Zod con React Hook Form</li>
+        <li>Creación de esquemas de validación</li>
+    </ul>
+    <!-- Logo de TypeScript -->
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+         alt="TypeScript Logo" style="width: 100px; margin-top: 20px;">
+</section>
+
+<section>
+    <h2>Ejemplo simple de Zod y React Hook Form 🛠️</h2>
+    <pre><code class="hljs language-typescript">
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+
+const schema = z.object({
+  username: z.string().min(3, 'El nombre de usuario debe tener al menos 3 caracteres'),
+});
+
+type SchemaType = z.infer&lt;typeof schema&gt;;
+
+const SimpleZodForm = () =&gt; {
+  const { register, handleSubmit, formState: { errors } } = useForm&lt;SchemaType&gt;({
+    resolver: zodResolver(schema),
+  });
+
+  const onSubmit = (data: SchemaType) =&gt; console.log(data);
+
+  return (
+    &lt;form onSubmit={handleSubmit(onSubmit)}&gt;
+      &lt;input {...register('username')} placeholder="Nombre de usuario" /&gt;
+      {errors.username?.message && &lt;span&gt;{errors.username.message}&lt;/span&gt;}
+
+      &lt;button type="submit"&gt;Enviar&lt;/button&gt;
+    &lt;/form&gt;
+  );
+};
+  </code></pre>
+</section>
+
+<!-- Ejemplo de integración Zod y React Hook Form -->
+<section>
+    <h2>Ejemplo de Integración Zod y React Hook Form 🛠️</h2>
+    <pre><code class="hljs language-typescript">
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+
+const schema = z.object({
+  email: z.string().email('Email inválido'),
+  password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
+});
+
+type SchemaType = z.infer&lt;typeof schema&gt;;
+
+const LoginForm = () => {
+  const { register, handleSubmit, formState: { errors } } = useForm&lt;SchemaType&gt;({
+    resolver: zodResolver(schema),
+  });
+
+  const onSubmit = (data: SchemaType) =&gt; console.log(data);
+
+  return (
+    &lt;form onSubmit={handleSubmit(onSubmit)}&gt;
+      &lt;input {...register('email')} /&gt;
+      {errors.email?.message && &lt;span&gt;{errors.email.message}&lt;/span&gt;}
+
+      &lt;input type="password" {...register('password')} /&gt;
+      {errors.password?.message && &lt;span&gt;{errors.password.message}&lt;/span&gt;}
+
+      &lt;button type="submit"&gt;Iniciar sesión&lt;/button&gt;
+    &lt;/form&gt;
+  );
+};
+    </code></pre>
+</section>
+
+<!-- Configuración de Formularios Tipados -->
+<section>
+    <h2>3. Configuración de Formularios Tipados 📋</h2>
+    <ul>
+        <li>Definición de tipos para formularios</li>
+        <li>Uso de genéricos en <code>useForm</code></li>
+        <li>Tipado de campos de formulario</li>
+        <li>Inferencia de tipos con Zod 🧠</li>
+    </ul>
+</section>
+
+
+<!-- 1. Formulario Simple con MUI y TypeScript -->
+<section>
+    <h2>1. Formulario Simple con MUI y TypeScript</h2>
+    <pre><code class="hljs language-typescript">
+import React, { useState, ChangeEvent, FormEvent } from 'react';
+import { TextField, Button } from '@mui/material';
+
+interface FormData {
+  email: string;
+  password: string;
+}
+
+const SimpleForm: React.FC = () => {
+  const [formData, setFormData] = useState&lt;FormData&gt;({
+    email: '',
+    password: ''
+  });
+
+  const handleChange = (e: ChangeEvent&lt;HTMLInputElement&gt;) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e: FormEvent&lt;HTMLFormElement&gt;) => {
+    e.preventDefault();
+    console.log(formData);
+  };
+
+  return (
+    &lt;form onSubmit={handleSubmit}&gt;
+      &lt;TextField
+        name="email"
+        label="Email"
+        value={formData.email}
+        onChange={handleChange}
+        fullWidth
+        margin="normal"
+      /&gt;
+      &lt;TextField
+        name="password"
+        label="Password"
+        type="password"
+        value={formData.password}
+        onChange={handleChange}
+        fullWidth
+        margin="normal"
+      /&gt;
+      &lt;Button type="submit" variant="contained" color="primary"&gt;
+        Submit
+      &lt;/Button&gt;
+    &lt;/form&gt;
+  );
+};
+    </code></pre>
+    <p>Este ejemplo muestra un formulario básico de MUI con TypeScript, sin validación avanzada.</p>
+</section>
+
+<!-- 2. Formulario MUI con Validación Manual y TypeScript -->
+<section>
+    <h2>2. Formulario MUI con Validación Manual y TypeScript</h2>
+    <pre><code class="hljs language-typescript">
+import React, { useState, ChangeEvent, FormEvent } from 'react';
+import { TextField, Button } from '@mui/material';
+
+interface FormData {
+  email: string;
+  password: string;
+}
+
+interface FormErrors {
+  email?: string;
+  password?: string;
+}
+
+const ValidatedForm: React.FC = () => {
+  const [formData, setFormData] = useState&lt;FormData&gt;({
+    email: '',
+    password: ''
+  });
+  const [errors, setErrors] = useState&lt;FormErrors&gt;({});
+
+  const handleChange = (e: ChangeEvent&lt;HTMLInputElement&gt;) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const validate = (): boolean => {
+    let tempErrors: FormErrors = {};
+    if (!formData.email) tempErrors.email = "Email is required";
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) tempErrors.email = "Email is invalid";
+    if (!formData.password) tempErrors.password = "Password is required";
+    else if (formData.password.length < 8) tempErrors.password = "Password must be at least 8 characters";
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
+  };
+
+  const handleSubmit = (e: FormEvent&lt;HTMLFormElement&gt;) => {
+    e.preventDefault();
+    if (validate()) {
+      console.log(formData);
+    }
+  };
+
+  return (
+    &lt;form onSubmit={handleSubmit}&gt;
+      &lt;TextField
+        name="email"
+        label="Email"
+        value={formData.email}
+        onChange={handleChange}
+        error={!!errors.email}
+        helperText={errors.email}
+        fullWidth
+        margin="normal"
+      /&gt;
+      &lt;TextField
+        name="password"
+        label="Password"
+        type="password"
+        value={formData.password}
+        onChange={handleChange}
+        error={!!errors.password}
+        helperText={errors.password}
+        fullWidth
+        margin="normal"
+      /&gt;
+      &lt;Button type="submit" variant="contained" color="primary"&gt;
+        Submit
+      &lt;/Button&gt;
+    &lt;/form&gt;
+  );
+};
+    </code></pre>
+    <p>Este ejemplo añade validación manual al formulario MUI con TypeScript.</p>
+</section>
+
+<!-- 3. Formulario Básico con React Hook Form y TypeScript -->
+<section>
+    <h2>3. Formulario Básico con React Hook Form y TypeScript</h2>
+    <pre><code class="hljs language-typescript">
+import React from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { TextField, Button } from '@mui/material';
+
+interface IFormInputs {
+  email: string;
+  password: string;
+}
+
+const RHFForm: React.FC = () => {
+  const { register, handleSubmit, formState: { errors } } = useForm&lt;IFormInputs&gt;();
+
+  const onSubmit: SubmitHandler&lt;IFormInputs&gt; = (data) => {
+    console.log(data);
+  };
+
+  return (
+    &lt;form onSubmit={handleSubmit(onSubmit)}&gt;
+      &lt;TextField
+        {...register("email", {
+          required: "Email is required",
+          pattern: {
+            value: /\S+@\S+\.\S+/,
+            message: "Email is invalid"
+          }
+        })}
+        label="Email"
+        error={!!errors.email}
+        helperText={errors.email?.message}
+        fullWidth
+        margin="normal"
+      /&gt;
+      &lt;TextField
+        {...register("password", {
+          required: "Password is required",
+          minLength: {
+            value: 8,
+            message: "Password must be at least 8 characters"
+          }
+        })}
+        label="Password"
+        type="password"
+        error={!!errors.password}
+        helperText={errors.password?.message}
+        fullWidth
+        margin="normal"
+      /&gt;
+      &lt;Button type="submit" variant="contained" color="primary"&gt;
+        Submit
+      &lt;/Button&gt;
+    &lt;/form&gt;
+  );
+};
+    </code></pre>
+    <p>Este ejemplo utiliza React Hook Form con TypeScript para manejar el estado y la validación del formulario.</p>
+</section>
+
+<!-- 4. Formulario Avanzado con React Hook Form, TypeScript y Validación Personalizada -->
+<section>
+    <h2>4. Formulario Avanzado con React Hook Form, TypeScript y Validación Personalizada</h2>
+    <pre><code class="hljs language-typescript">
+import React from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { TextField, Button, MenuItem } from '@mui/material';
+
+type UserRole = 'user' | 'admin';
+
+interface IFormInputs {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  role: UserRole;
+}
+
+const AdvancedRHFForm: React.FC = () => {
+  const { register, handleSubmit, formState: { errors }, watch } = useForm&lt;IFormInputs&gt;();
+
+  const onSubmit: SubmitHandler&lt;IFormInputs&gt; = (data) => {
+    console.log(data);
+  };
+
+  const password = watch("password");
+
+  return (
+    &lt;form onSubmit={handleSubmit(onSubmit)}&gt;
+      &lt;TextField
+        {...register("email", {
+          required: "Email is required",
+          pattern: {
+            value: /\S+@\S+\.\S+/,
+            message: "Email is invalid"
+          }
+        })}
+        label="Email"
+        error={!!errors.email}
+        helperText={errors.email?.message}
+        fullWidth
+        margin="normal"
+      /&gt;
+      &lt;TextField
+        {...register("password", {
+          required: "Password is required",
+          minLength: {
+            value: 8,
+            message: "Password must be at least 8 characters"
+          }
+        })}
+        label="Password"
+        type="password"
+        error={!!errors.password}
+        helperText={errors.password?.message}
+        fullWidth
+        margin="normal"
+      /&gt;
+      &lt;TextField
+        {...register("confirmPassword", {
+          validate: value => value === password || "Passwords do not match"
+        })}
+        label="Confirm Password"
+        type="password"
+        error={!!errors.confirmPassword}
+        helperText={errors.confirmPassword?.message}
+        fullWidth
+        margin="normal"
+      /&gt;
+      &lt;TextField
+        {...register("role", { required: "Role is required" })}
+        select
+        label="Role"
+        error={!!errors.role}
+        helperText={errors.role?.message}
+        fullWidth
+        margin="normal"
+      &gt;
+        &lt;MenuItem value="user"&gt;User&lt;/MenuItem&gt;
+        &lt;MenuItem value="admin"&gt;Admin&lt;/MenuItem&gt;
+      &lt;/TextField&gt;
+      &lt;Button type="submit" variant="contained" color="primary"&gt;
+        Submit
+      &lt;/Button&gt;
+    &lt;/form&gt;
+  );
+};
+    </code></pre>
+    <p>Este ejemplo muestra un formulario más complejo con React Hook Form y TypeScript, incluyendo validación
+        personalizada y campos dependientes.</p>
+</section>
+
+<!-- 5. Formulario con React Hook Form, Zod y TypeScript -->
+<section>
+    <h2>5. Formulario con React Hook Form, Zod y TypeScript</h2>
+    <pre><code class="hljs language-typescript">
+import React from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { TextField, Button, MenuItem } from '@mui/material';
+
+const schema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string(),
+  role: z.enum(["user", "admin"] as const, { required_error: "Please select a role" })
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+});
+
+type FormSchema = z.infer&lt;typeof schema&gt;;
+
+const ZodForm: React.FC = () => {
+  const { register, handleSubmit, formState: { errors } } = useForm&lt;FormSchema&gt;({
+    resolver: zodResolver(schema)
+  });
+
+  const onSubmit: SubmitHandler&lt;FormSchema&gt; = (data) => {
+    console.log(data);
+  };
+
+  return (
+    &lt;form onSubmit={handleSubmit(onSubmit)}&gt;
+      &lt;TextField
+        {...register("email")}
+        label="Email"
+        error={!!errors.email}
+        helperText={errors.email?.message}
+        fullWidth
+        margin="normal"
+      /&gt;
+      &lt;TextField
+        {...register("password")}
+        label="Password"
+        type="password"
+        error={!!errors.password}
+        helperText={errors.password?.message}
+        fullWidth
+        margin="normal"
+      /&gt;
+      &lt;TextField
+        {...register("confirmPassword")}
+        label="Confirm Password"
+        type="password"
+        error={!!errors.confirmPassword}
+        helperText={errors.confirmPassword?.message}
+        fullWidth
+        margin="normal"
+      /&gt;
+      &lt;TextField
+        {...register("role")}
+        select
+        label="Role"
+        error={!!errors.role}
+        helperText={errors.role?.message}
+        fullWidth
+        margin="normal"
+      &gt;
+        &lt;MenuItem value="user"&gt;User&lt;/MenuItem&gt;
+        &lt;MenuItem value="admin"&gt;Admin&lt;/MenuItem&gt;
+      &lt;/TextField&gt;
+      &lt;Button type="submit" variant="contained" color="primary"&gt;
+        Submit
+      &lt;/Button&gt;
+    &lt;/form&gt;
+  );
+};
+    </code></pre>
+    <p>Este ejemplo final muestra la integración de React Hook Form con Zod y TypeScript para una validación de esquema
+        robusta y completamente tipada.</p>
+</section>
+
+<!-- Resumen -->
+<section>
+    <h2>Resumen 📚</h2>
+    <ul>
+        <li>React Hook Form simplifica la gestión de formularios 🎣</li>
+        <li>Zod proporciona una potente validación de esquemas 🛠️</li>
+        <li>La integración de ambos ofrece formularios tipados y validados ✅</li>
+        <li>Las validaciones avanzadas permiten lógica compleja 🧪</li>
+        <li>El manejo de errores tipados mejora la experiencia del usuario 😊</li>
+    </ul>
+</section>
+
+<!-- Tarea -->
+<!--<section>
+    <h2>Tarea 📝</h2>
+    <p>Implementar un formulario complejo de registro de producto utilizando React Hook Form y Zod, incluyendo:</p>
+    <ul>
+        <li>Al menos 5 campos con diferentes tipos de validación</li>
+        <li>Validación condicional 🔄</li>
+        <li>Validación asíncrona ⏳</li>
+        <li>Manejo de errores con feedback visual usando Material-UI 🖌️</li>
+        <li>Transformación de datos antes del envío 🔧</li>
+    </ul>
+</section>-->
+
+<!-- Gracias -->
+<section>
+    <h2>¡Gracias! 🙌</h2>
+    <p>¿Preguntas?</p>
+</section>

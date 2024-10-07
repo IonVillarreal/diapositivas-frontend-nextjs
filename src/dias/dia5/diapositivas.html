@@ -1,0 +1,614 @@
+<!-- Portada -->
+<section>
+    <h1><i class="devicon-nextjs-original-wordmark colored icon"></i> Día 5: Data Fetching y Caching en App Router</h1>
+    <p>Módulo de desarrollo Frontend</p>
+    <p>👨‍🏫 Docente: Imanol Villarreal</p>
+</section>
+
+<!-- Agenda -->
+<section>
+    <h2>Agenda del Día 📋</h2>
+    <ol>
+        <li>Fundamentos de Data Fetching en App Router</li>
+        <li>Implementación de Server-Side Rendering en App Router</li>
+        <li>Manejo de Estado del Servidor</li>
+<!--        <li>Descanso</li>-->
+        <li>Revalidación de Datos</li>
+        <li>Mutación de Datos en App Router</li>
+        <li>Resumen y Tarea</li>
+    </ol>
+</section>
+
+<!-- Introducción al Data Fetching -->
+<section>
+    <h2>1. Introducción al Data Fetching 🌐</h2>
+    <ul>
+        <li>Importancia del Data Fetching en aplicaciones web modernas</li>
+        <li>Evolución del Data Fetching en React y Next.js</li>
+        <li>Conceptos clave: CSR, SSR, SSG, ISR</li>
+    </ul>
+</section>
+
+<!-- Client-Side Rendering (CSR) -->
+<section>
+    <h2>2. Client-Side Rendering (CSR) en Next.js 🖥️</h2>
+    <p>Comenzaremos con el enfoque tradicional de CSR utilizando hooks de React.</p>
+</section>
+
+<section>
+    <h2>Como funciona Client Side Rendering</h2>
+    <img src="public/images/1*P2XJ4V46V18fM2Ym4Onkag.webp" alt="Importancia del Desarrollo Frontend"
+         style="width: 80%; margin-top: 20px;">
+</section>
+
+<!-- Ejemplo de CSR con useState y useEffect -->
+<section>
+    <h3>Ejemplo de CSR: Lista de Usuarios</h3>
+    <pre><code class="hljs language-tsx">
+import React, { useState, useEffect } from 'react';
+import {
+  List,
+  ListItem,
+  ListItemText,
+  Typography,
+  CircularProgress,
+  Box
+} from '@mui/material';
+
+interface User {
+  id: number;
+  name: string;
+}
+
+export default function UserList() {
+  const [users, setUsers] = useState&lt;User[]&gt;([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState&lt;string | null&gt;(null);
+
+  useEffect(() => {
+    fetch('https://jsonplaceholder.typicode.com/users')
+      .then(response => response.json())
+      .then((data: User[]) => {
+        setUsers(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return &lt;Box display="flex" justifyContent="center"&gt;&lt;CircularProgress /&gt;&lt;/Box&gt;;
+  if (error) return &lt;Typography color="error"&gt;Error: {error}&lt;/Typography&gt;;
+
+  return (
+    &lt;List&gt;
+      {users.map(user => (
+        &lt;ListItem key={user.id}&gt;
+          &lt;ListItemText primary={user.name} /&gt;
+        &lt;/ListItem&gt;
+      ))}
+    &lt;/List&gt;
+  );
+}
+    </code></pre>
+</section>
+
+<!-- Ventajas y Desventajas de CSR -->
+<section>
+    <h3>Ventajas y Desventajas de CSR</h3>
+    <div style="display: flex; justify-content: space-between;">
+        <div style="flex: 1;">
+            <h4>Ventajas</h4>
+            <ul>
+                <li>Interactividad inmediata</li>
+                <li>Actualizaciones en tiempo real</li>
+                <li>Menor carga en el servidor</li>
+            </ul>
+        </div>
+        <div style="flex: 1;">
+            <h4>Desventajas</h4>
+            <ul>
+                <li>Tiempo de carga inicial más lento</li>
+                <li>SEO subóptimo</li>
+                <li>Puede causar parpadeo de contenido</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- Server-Side Rendering (SSR) -->
+<section>
+    <h2>3. Server-Side Rendering (SSR) con App Router 🚀</h2>
+    <p>Ahora, veamos cómo Next.js 13+ simplifica el SSR con el App Router.</p>
+</section>
+
+<section>
+    <h2>Como funciona Server Side Rendering</h2>
+    <img src="public/images/1705351703512.jpeg" alt="Importancia del Desarrollo Frontend"
+         style="width: 80%; margin-top: 20px;">
+</section>
+
+<!-- Ejemplo de SSR básico -->
+<section>
+    <h3>Ejemplo de SSR: Lista de Posts</h3>
+    <pre><code class="hljs language-tsx">
+// app/posts/page.tsx
+import { List, ListItem, ListItemText, Typography } from '@mui/material';
+
+interface Post {
+  id: number;
+  title: string;
+}
+
+async function getPosts(): Promise&lt;Post[]&gt; {
+  const res = await fetch('https://jsonplaceholder.typicode.com/posts');
+  if (!res.ok) throw new Error('Failed to fetch posts');
+  return res.json();
+}
+
+export default async function PostList() {
+  const posts = await getPosts();
+
+  return (
+    &lt;&gt;
+      &lt;Typography variant="h4" component="h1" gutterBottom&gt;
+        Posts
+      &lt;/Typography&gt;
+      &lt;List&gt;
+        {posts.map(post => (
+          &lt;ListItem key={post.id}&gt;
+            &lt;ListItemText primary={post.title} /&gt;
+          &lt;/ListItem&gt;
+        ))}
+      &lt;/List&gt;
+    &lt;/&gt;
+  );
+}
+    </code></pre>
+</section>
+
+<!-- SSR con manejo de errores y carga -->
+<section>
+    <h3>SSR con Manejo de Errores y Carga</h3>
+    <pre><code class="hljs language-tsx">
+// app/posts/page.tsx
+import { Suspense } from 'react'
+
+async function getPosts() {
+  const res = await fetch('https://jsonplaceholder.typicode.com/posts')
+  if (!res.ok) throw new Error('Failed to fetch posts')
+  return res.json()
+}
+
+function PostList({ posts }) {
+  return (
+    &lt;ul&gt;
+      {posts.map(post => (
+        &lt;li key={post.id}&gt;{post.title}&lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  )
+}
+
+export default async function PostPage() {
+  const posts = await getPosts()
+
+  return (
+    &lt;Suspense fallback={&lt;p&gt;Cargando posts...&lt;/p&gt;}&gt;
+      &lt;PostList posts={posts} /&gt;
+    &lt;/Suspense&gt;
+  )
+}
+
+// app/posts/error.tsx
+'use client'
+
+export default function Error({ error, reset }) {
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Algo salió mal!&lt;/h2&gt;
+      &lt;p&gt;{error.message}&lt;/p&gt;
+      &lt;button onClick={() => reset()}&gt;Intentar de nuevo&lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+    </code></pre>
+</section>
+
+<!-- Comparación entre CSR y SSR -->
+<section>
+    <h2>4. Comparación entre CSR y SSR ⚖️</h2>
+    <table>
+        <tr>
+            <th>Aspecto</th>
+            <th>CSR</th>
+            <th>SSR</th>
+        </tr>
+        <tr>
+            <td>Tiempo de carga inicial</td>
+            <td>Más lento</td>
+            <td>Más rápido</td>
+        </tr>
+        <tr>
+            <td>SEO</td>
+            <td>Subóptimo</td>
+            <td>Mejor</td>
+        </tr>
+        <tr>
+            <td>Interactividad</td>
+            <td>Inmediata</td>
+            <td>Después de la hidratación</td>
+        </tr>
+        <tr>
+            <td>Carga del servidor</td>
+            <td>Menor</td>
+            <td>Mayor</td>
+        </tr>
+    </table>
+</section>
+
+<!-- Técnicas avanzadas de Data Fetching -->
+<section>
+    <h2>5. Técnicas Avanzadas de Data Fetching 🔍</h2>
+    <ul>
+        <li>Parallel Data Fetching</li>
+        <li>Sequential Data Fetching</li>
+        <li>Uso de generateMetadata para SEO</li>
+    </ul>
+</section>
+
+<!-- Ejemplo de Parallel Data Fetching -->
+<section>
+    <h3>Parallel Data Fetching</h3>
+    <pre><code class="hljs language-tsx">
+// app/dashboard/page.tsx
+async function getUser(id) {
+  const res = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`)
+  return res.json()
+}
+
+async function getPosts() {
+  const res = await fetch('https://jsonplaceholder.typicode.com/posts')
+  return res.json()
+}
+
+export default async function Dashboard() {
+  const userPromise = getUser(1)
+  const postsPromise = getPosts()
+
+  const [user, posts] = await Promise.all([userPromise, postsPromise])
+
+  return (
+    &lt;&gt;
+      &lt;h1&gt;Bienvenido, {user.name}&lt;/h1&gt;
+      &lt;h2&gt;Tus posts:&lt;/h2&gt;
+      &lt;ul&gt;
+        {posts.filter(post => post.userId === user.id).map(post => (
+          &lt;li key={post.id}&gt;{post.title}&lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/&gt;
+  )
+}
+    </code></pre>
+</section>
+
+<!-- Ejemplo de generateMetadata -->
+<section>
+    <h3>Uso de generateMetadata para SEO</h3>
+    <pre><code class="hljs language-tsx">
+// app/users/[id]/page.tsx
+import { Metadata } from 'next'
+
+interface User {
+  id: number
+  name: string
+  email: string
+  phone: string
+}
+
+interface Params {
+  params: {
+    id: string
+  }
+}
+
+async function getUser(id: string): Promise&lt;User&gt; {
+  const res = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`)
+  return res.json()
+}
+
+export async function generateMetadata({ params }: Params): Promise&lt;Metadata&gt; {
+  const user = await getUser(params.id)
+  return { title: `Perfil de ${user.name}` }
+}
+
+export default async function UserProfile({ params }: Params) {
+  const user = await getUser(params.id)
+
+  return (
+    &lt;&gt;
+      &lt;h1&gt;{user.name}&lt;/h1&gt;
+      &lt;p&gt;Email: {user.email}&lt;/p&gt;
+      &lt;p&gt;Teléfono: {user.phone}&lt;/p&gt;
+    &lt;/&gt;
+  )
+}
+    </code></pre>
+</section>
+
+<!-- Caching y Revalidación -->
+<section>
+    <h2>6. Caching y Revalidación 🔄</h2>
+    <ul>
+        <li>Caching automático en App Router</li>
+        <li>Revalidación bajo demanda</li>
+        <li>Revalidación basada en tiempo (ISR)</li>
+    </ul>
+</section>
+
+<!-- Ejemplo de Revalidación -->
+<section>
+    <h3>Ejemplo de Revalidación</h3>
+    <pre><code class="hljs language-tsx">
+// app/posts/page.tsx
+export const revalidate = 60 // revalidar cada 60 segundos
+
+async function getPosts() {
+  const res = await fetch('https://jsonplaceholder.typicode.com/posts', {
+    next: { revalidate: 60 } // alternativa a la exportación de revalidate
+  })
+  return res.json()
+}
+
+export default async function Posts() {
+  const posts = await getPosts()
+
+  return (
+    &lt;ul&gt;
+      {posts.map(post => (
+        &lt;li key={post.id}&gt;{post.title}&lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  )
+}
+    </code></pre>
+</section>
+
+<!-- Mutación de Datos -->
+<section>
+    <h2>7. Mutación de Datos 🛠️</h2>
+    <ul>
+        <li>Server Actions para mutaciones seguras</li>
+        <li>Revalidación después de mutaciones</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Introducción a Server Actions 🔐</h2>
+    <ul>
+        <li>Server Actions son una nueva característica en Next.js 13+</li>
+        <li>Permiten definir funciones del lado del servidor que pueden ser llamadas desde el cliente</li>
+        <li>Ventajas:
+            <ul>
+                <li>Seguridad mejorada: la lógica sensible se ejecuta en el servidor</li>
+                <li>Mejor rendimiento: reduce la cantidad de JavaScript enviado al cliente</li>
+                <li>Simplicidad: integración perfecta con formularios y componentes de React</li>
+            </ul>
+        </li>
+        <li>Se definen usando la directiva 'use server' al inicio del archivo o función</li>
+        <li>Pueden ser utilizadas en componentes del cliente y del servidor</li>
+    </ul>
+</section>
+
+<!-- Ejemplo Básico de Server Action -->
+<section>
+    <h3>Ejemplo Básico de Server Action</h3>
+    <pre><code class="hljs language-tsx">
+// app/actions.ts
+'use server'
+
+export async function handleSubmit(formData: FormData) {
+  const name = formData.get('name')
+  console.log(`Formulario enviado con nombre: ${name}`)
+  // Aquí podrías realizar operaciones del lado del servidor,
+  // como guardar en una base de datos
+}
+
+// app/form.tsx
+import { handleSubmit } from './actions'
+
+export default function Form() {
+  return (
+    &lt;form action={handleSubmit}&gt;
+      &lt;input type="text" name="name" required /&gt;
+      &lt;button type="submit"&gt;Enviar&lt;/button&gt;
+    &lt;/form&gt;
+  )
+}
+    </code></pre>
+    <p>En este ejemplo, handleSubmit es un Server Action que se ejecuta en el servidor cuando se envía el
+        formulario.</p>
+</section>
+
+
+<!-- Ejemplo de Server Action -->
+<section>
+    <h3>Ejemplo de revalidación con Server Action con MUI</h3>
+    <pre><code class="hljs language-tsx">
+// app/actions.ts
+'use server'
+
+import { revalidatePath } from 'next/cache'
+
+export async function addPost(formData: FormData) {
+  const title = formData.get('title')
+  const body = formData.get('body')
+
+  const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
+    method: 'POST',
+    body: JSON.stringify({ title, body, userId: 1 }),
+    headers: { 'Content-Type': 'application/json' },
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to add post')
+  }
+
+  revalidatePath('/posts')
+}
+
+// app/posts/new/page.tsx
+import { addPost } from '@/app/actions'
+import { Button, TextField, Box, Typography } from '@mui/material'
+
+export default function NewPost() {
+  return (
+    &lt;Box component="form" action={addPost} noValidate sx={{ mt: 1 }}&gt;
+      &lt;Typography variant="h4" component="h1" gutterBottom&gt;
+        Añadir Nuevo Post
+      &lt;/Typography&gt;
+      &lt;TextField
+        margin="normal"
+        required
+        fullWidth
+        id="title"
+        label="Título"
+        name="title"
+        autoFocus
+      /&gt;
+      &lt;TextField
+        margin="normal"
+        required
+        fullWidth
+        name="body"
+        label="Contenido"
+        id="body"
+        multiline
+        rows={4}
+      /&gt;
+      &lt;Button
+        type="submit"
+        fullWidth
+        variant="contained"
+        sx={{ mt: 3, mb: 2 }}
+      &gt;
+        Añadir Post
+      &lt;/Button&gt;
+    &lt;/Box&gt;
+  )
+}
+    </code></pre>
+</section>
+
+<section>
+    <h2>Reacción a Server Actions</h2>
+    <img src="public/images/so-whats-the-deal-with-the-code-on-this-been-seeing-this-a-v0-qxwioqacqowb1.jpg.webp"
+         alt="Reacción a Server Actions"
+         style="width: 60%; margin-top: 20px;">
+</section>
+
+<section>
+    <h2>Reacción a Server Actions</h2>
+    <img src="public/images/396524762_310989841652001_1289965487239008314_n.jpg"
+         alt="Reacción a Server Actions"
+         style="width: 60%; margin-top: 20px;">
+</section>
+
+<!-- Introducción a API Routes en Next.js -->
+<section>
+    <h2>API Routes en Next.js 🚀</h2>
+    <ul>
+        <li>Next.js permite crear APIs fácilmente usando API Routes</li>
+        <li>Las API Routes se definen en el directorio `app/api`</li>
+        <li>Permiten manejar diferentes métodos HTTP (GET, POST, etc.)</li>
+        <li>Ideal para crear backends ligeros o endpoints de utilidad</li>
+    </ul>
+</section>
+
+<!-- Ejemplo de API Route -->
+<section>
+    <h3>Ejemplo: API de Estado del Sistema</h3>
+    <pre><code class="hljs language-typescript">
+// app/api/status/route.ts
+import { NextResponse } from 'next/server';
+
+export async function GET() {
+  const status = {
+    serverTime: new Date().toISOString(),
+    nodeVersion: process.version,
+    uptime: process.uptime(),
+    memory: process.memoryUsage(),
+    cpuUsage: process.cpuUsage()
+  };
+
+  return NextResponse.json(status);
+}
+    </code></pre>
+    <p>Esta API devuelve información sobre el estado del servidor, incluyendo la hora actual.</p>
+</section>
+
+<!-- Consumiendo la API desde el Frontend -->
+<section>
+    <h3>Consumiendo la API desde el Frontend</h3>
+    <pre><code class="hljs language-tsx">
+// app/status/page.tsx
+import { useEffect, useState } from 'react';
+
+export default function StatusPage() {
+  const [status, setStatus] = useState(null);
+
+  useEffect(() => {
+    async function fetchStatus() {
+      const response = await fetch('/api/status');
+      const data = await response.json();
+      setStatus(data);
+    }
+
+    fetchStatus();
+  }, []);
+
+  if (!status) return &lt;div&gt;Cargando...&lt;/div&gt;;
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Estado del Sistema&lt;/h1&gt;
+      &lt;p&gt;Hora del servidor: {status.serverTime}&lt;/p&gt;
+      &lt;p&gt;Versión de Node: {status.nodeVersion}&lt;/p&gt;
+      &lt;p&gt;Tiempo de actividad: {status.uptime} segundos&lt;/p&gt;
+      &lt;p&gt;Uso de memoria: {JSON.stringify(status.memory)}&lt;/p&gt;
+      &lt;p&gt;Uso de CPU: {JSON.stringify(status.cpuUsage)}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+    </code></pre>
+    <p>Este componente consume la API y muestra la información del estado del sistema.</p>
+</section>
+
+<!-- Ventajas de las API Routes -->
+<section>
+    <h3>Ventajas de las API Routes en Next.js</h3>
+    <ul>
+        <li>Fácil de implementar y desplegar</li>
+        <li>Mismo entorno de desarrollo para frontend y backend</li>
+        <li>Acceso seguro a recursos del servidor</li>
+        <li>Ideal para prototipos rápidos y MVPs</li>
+        <li>Se pueden usar para implementar autenticación, webhooks, etc.</li>
+    </ul>
+</section>
+
+<!-- Resumen -->
+<section>
+    <h2>Resumen 📚</h2>
+    <ul>
+        <li>CSR ofrece interactividad inmediata pero con desventajas en SEO y tiempo de carga inicial.</li>
+        <li>SSR en Next.js mejora el SEO y el tiempo de carga inicial.</li>
+        <li>App Router simplifica el data fetching y el manejo de estado del servidor.</li>
+        <li>Las técnicas avanzadas como Parallel Fetching optimizan el rendimiento.</li>
+        <li>El caching y la revalidación mantienen los datos actualizados eficientemente.</li>
+        <li>Server Actions permiten mutaciones seguras desde el cliente.</li>
+        <li>API Routes en Next.js facilitan la creación de endpoints backend.</li>
+        <li>La integración de frontend y backend en Next.js mejora la experiencia de desarrollo.</li>
+    </ul>
+</section>
