@@ -1,0 +1,430 @@
+<section>
+    <h1>Día 10: Despliegue a Producción 🚀</h1>
+    <p>Módulo de desarrollo Frontend</p>
+    <p>👨‍🏫 Docente: Imanol Villarreal</p>
+</section>
+
+
+<section>
+    <h2>Agenda del Día 📅</h2>
+    <ol>
+        <li>Introducción al despliegue de aplicaciones Next.js</li>
+        <li>Métodos de despliegue</li>
+        <li>Despliegue local con PM2</li>
+        <li>Despliegue en Digital Ocean</li>
+        <li>Despliegue en Vercel</li>
+        <li>Comparación de métodos de despliegue</li>
+        <li>Mejores prácticas y consideraciones de seguridad</li>
+        <li>Resumen y preguntas</li>
+    </ol>
+</section>
+
+
+<section>
+    <h2>1. Introducción al despliegue de aplicaciones Next.js 🌐</h2>
+    <ul>
+        <li>¿Qué significa desplegar una aplicación?</li>
+        <li>Consideraciones para aplicaciones Next.js</li>
+        <li>Diferencias entre entornos de desarrollo y producción</li>
+        <li>Importancia de la escalabilidad y el rendimiento</li>
+    </ul>
+</section>
+
+
+<section>
+    <h2>2. Métodos de despliegue 🛠️</h2>
+    <ul>
+        <li>Despliegue local con PM2</li>
+        <li>Despliegue en Digital Ocean</li>
+        <li>Despliegue en Vercel</li>
+    </ul>
+</section>
+
+
+<section>
+    <h2>3. Despliegue local con PM2 🖥️</h2>
+    <p>PM2 es un gestor de procesos para Node.js que facilita el despliegue y mantenimiento de aplicaciones.</p>
+</section>
+
+
+<section>
+    <h3>Instalación de PM2</h3>
+    <pre><code class="hljs bash">npm install -g pm2</code></pre>
+    <p>Verifica la instalación:</p>
+    <pre><code class="hljs bash">pm2 --version</code></pre>
+</section>
+
+
+<section>
+    <h3>Preparación del proyecto Next.js</h3>
+    <ol>
+        <li>Clona el repositorio del proyecto:
+            <pre><code
+                    class="hljs bash">git clone https://github.com/IonVillarreal/mi-proyecto-noticias.git</code></pre>
+        </li>
+        <li>Instala las dependencias:
+            <pre><code class="hljs bash">cd mi-proyecto-noticias && npm install</code></pre>
+        </li>
+        <li>Construye la aplicación:
+            <pre><code class="hljs bash">npm run build</code></pre>
+        </li>
+    </ol>
+</section>
+
+
+<section>
+    <h3>Despliegue con PM2</h3>
+    <ol>
+        <li>Navega al directorio de tu proyecto:
+            <pre><code class="hljs bash">cd mi-proyecto-noticias</code></pre>
+        </li>
+        <li>Inicia la aplicación con PM2:
+            <pre><code class="hljs bash">pm2 start npm --name "mi-proyecto-noticias" -- start</code></pre>
+        </li>
+        <li>Verifica que la aplicación esté ejecutándose:
+            <pre><code class="hljs bash">pm2 list</code></pre>
+        </li>
+        <li>Configura PM2 para iniciar automáticamente al arrancar el sistema:
+            <pre><code class="hljs bash">pm2 startup systemd
+pm2 save</code></pre>
+        </li>
+    </ol>
+</section>
+
+
+<section>
+    <h3>Comandos útiles de PM2</h3>
+    <ul>
+        <li>Listar procesos:
+            <pre><code class="hljs bash">pm2 list</code></pre>
+        </li>
+        <li>Monitorear:
+            <pre><code class="hljs bash">pm2 monit</code></pre>
+        </li>
+        <li>Reiniciar:
+            <pre><code class="hljs bash">pm2 restart mi-proyecto-noticias</code></pre>
+        </li>
+        <li>Detener:
+            <pre><code class="hljs bash">pm2 stop mi-proyecto-noticias</code></pre>
+        </li>
+        <li>Eliminar:
+            <pre><code class="hljs bash">pm2 delete mi-proyecto-noticias</code></pre>
+        </li>
+    </ul>
+</section>
+
+
+<section>
+    <h2>4. Despliegue en Digital Ocean 🌊</h2>
+    <p>Digital Ocean ofrece Droplets, que son servidores virtuales privados (VPS) donde puedes desplegar tu
+        aplicación.</p>
+</section>
+
+
+<section>
+    <h3>Creación de un Droplet</h3>
+    <ol>
+        <li>Inicia sesión en tu cuenta de Digital Ocean</li>
+        <li>Haz clic en "Create" y selecciona "Droplets"</li>
+        <li>Elige Ubuntu como sistema operativo</li>
+        <li>Selecciona un plan adecuado</li>
+        <li>Elige una región cercana a tus usuarios</li>
+        <li>Agrega tu clave SSH o crea una contraseña</li>
+        <li>Haz clic en "Create Droplet"</li>
+    </ol>
+</section>
+
+
+<section>
+    <h3>Configuración del Droplet</h3>
+    <ol>
+        <li>Conéctate vía SSH:
+            <pre><code class="hljs bash">ssh root@tu_ip_droplet</code></pre>
+        </li>
+        <li>Actualiza el sistema:
+            <pre><code class="hljs bash">sudo apt update && sudo apt upgrade -y</code></pre>
+        </li>
+        <li>Instala Node.js y Git:
+            <pre><code class="hljs bash">curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs git</code></pre>
+        </li>
+    </ol>
+</section>
+
+
+<section>
+    <h3>Despliegue de la aplicación en el Droplet</h3>
+    <ol>
+        <li>Clona el repositorio:
+            <pre><code
+                    class="hljs bash">git clone https://github.com/IonVillarreal/mi-proyecto-noticias.git</code></pre>
+        </li>
+        <li>Instala dependencias y construye la aplicación:
+            <pre><code class="hljs bash">cd mi-proyecto-noticias
+npm install
+npm run build</code></pre>
+        </li>
+        <li>Instala y configura PM2:
+            <pre><code class="hljs bash">npm install -g pm2
+pm2 start npm --name "mi-proyecto-noticias" -- start
+pm2 startup systemd
+pm2 save</code></pre>
+        </li>
+    </ol>
+</section>
+
+
+<section>
+    <h3>Configuración de Nginx como proxy inverso</h3>
+    <ol>
+        <li>Instala Nginx:
+            <pre><code class="hljs bash">sudo apt install nginx</code></pre>
+        </li>
+        <li>Edita la configuración en <code>/etc/nginx/sites-available/default</code>:
+            <pre><code class="hljs nginx">
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+
+server_name _;
+
+# Proxy todas las solicitudes a tu aplicación Next.js
+location / {
+    proxy_pass http://127.0.0.1:8080;  # Puerto donde PM2 está ejecutando tu aplicación Next.js
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_cache_bypass $http_upgrade;
+}
+
+# Proxy para la API en Express
+location /api/ {
+    rewrite ^/api/?(.*)$ /$1 break;
+    proxy_pass http://127.0.0.1:3000;  # Puerto donde PM2 está ejecutando tu backend Express
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_cache_bypass $http_upgrade;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+
+}
+
+            </code>
+            </pre>
+        </li>
+
+
+        Verifica y reinicia Nginx:
+        sudo nginx -t
+        sudo systemctl restart nginx
+
+
+    </ol>
+</section>
+
+
+<section>
+    <h2>5. Despliegue en Vercel ▲</h2>
+    <p>Vercel es la plataforma creada por los desarrolladores de Next.js, ofreciendo una experiencia de despliegue
+        optimizada.</p>
+</section>
+
+
+<section>
+    <h3>Preparación para el despliegue en Vercel</h3>
+    <ol>
+        <li>Crea una cuenta en Vercel</li>
+        <li>Instala la CLI de Vercel:
+            <pre><code class="hljs bash">npm i -g vercel</code></pre>
+        </li>
+        <li>Inicia sesión:
+            <pre><code class="hljs bash">vercel login</code></pre>
+        </li>
+    </ol>
+</section>
+
+
+<section>
+    <h3>Despliegue con Vercel</h3>
+    <ol>
+        <li>Ve al directorio del proyecto:
+            <pre><code class="hljs bash">cd mi-proyecto-noticias</code></pre>
+        </li>
+        <li>Ejecuta:
+            <pre><code class="hljs bash">vercel</code></pre>
+        </li>
+        <li>Sigue las instrucciones en pantalla</li>
+        <li>Obtén la URL de tu aplicación desplegada</li>
+    </ol>
+</section>
+
+
+<section>
+    <h3>Configuración adicional en Vercel</h3>
+    <ul>
+        <li>Variables de entorno en el dashboard</li>
+        <li>Dominio personalizado</li>
+        <li>Integración continua con GitHub</li>
+    </ul>
+</section>
+
+
+<section>
+    <h2>6. Comparación de métodos de despliegue 📊</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Aspecto</th>
+            <th>PM2 (Local)</th>
+            <th>Digital Ocean</th>
+            <th>Vercel</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Control</td>
+            <td>Alto</td>
+            <td>Alto</td>
+            <td>Medio</td>
+        </tr>
+        <tr>
+            <td>Facilidad de uso</td>
+            <td>Media</td>
+            <td>Baja</td>
+            <td>Alta</td>
+        </tr>
+        <tr>
+            <td>Escalabilidad</td>
+            <td>Limitada</td>
+            <td>Alta</td>
+            <td>Alta</td>
+        </tr>
+        <tr>
+            <td>Costo</td>
+            <td>Bajo</td>
+            <td>Medio</td>
+            <td>Bajo-Medio</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+
+<section>
+    <h2>7. Mejores prácticas y consideraciones de seguridad 🔒</h2>
+    <ul>
+        <li>Usa HTTPS para todas las conexiones</li>
+        <li>Configura correctamente las variables de entorno</li>
+        <li>Implementa logging y monitoreo</li>
+        <li>Mantén tus dependencias actualizadas</li>
+        <li>Realiza copias de seguridad regularmente</li>
+        <li>Utiliza un firewall y configura los puertos</li>
+        <li>Implementa rate limiting para prevenir ataques DoS</li>
+    </ul>
+</section>
+
+
+<section>
+    <h2> Resumen de la clase 📝</h2>
+    <ul>
+        <li>Vimos tres métodos para desplegar Next.js</li>
+        <li>PM2 es ideal para entornos locales y control total</li>
+        <li>Digital Ocean ofrece flexibilidad y control</li>
+        <li>Vercel facilita el despliegue con mínima configuración</li>
+        <li>La elección depende de tus necesidades específicas</li>
+        <li>La seguridad es esencial en cualquier despliegue</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Resumen del Curso 📚</h2>
+    <ul>
+        <li>Fundamentos de React y componentes 🧱</li>
+        <li>Next.js y App Router para enrutamiento avanzado 🗺️</li>
+        <li>Diseño de interfaces con Material-UI (MUI) 🎨</li>
+        <li>Manejo de formularios con React Hook Form y validación con Zod ✅</li>
+        <li>Técnicas de Data Fetching y Caching en App Router 🔄</li>
+        <li>Implementación de autenticación y autorización en Next.js 🔐</li>
+        <li>Gestión de estado del servidor con TanStack Query 📊</li>
+        <li>Patrones avanzados de State Management 🧠</li>
+        <li>Optimización de rendimiento y técnicas avanzadas ⚡</li>
+        <li>Despliegue de aplicaciones Next.js en diferentes entornos 🚀</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Próximos Pasos en Desarrollo Frontend 🚀</h2>
+
+    <h3>Temas Recomendados:</h3>
+    <ul>
+        <li>i18n con Next.js: Internacionalización de aplicaciones 🌎</li>
+        <li>Tailwind CSS: Framework de utilidades CSS para diseño rápido 🎨</li>
+        <li>Shadcn UI: Componentes reutilizables y personalizables 🧩</li>
+        <li>Despliegue con Docker: Containerización para aplicaciones web 🐳</li>
+        <li>Desarrollo Backend: Node.js, Express, o NestJS para APIs 🔧</li>
+        <li>Microfrontends: Arquitectura para aplicaciones web a gran escala 🏗️</li>
+    </ul>
+
+    <h3>Temas Adicionales para Explorar:</h3>
+    <ul>
+        <li>Testing: Jest, React Testing Library, Cypress 🧪</li>
+        <li>State Management Avanzado: Redux Toolkit, Zustand 📊</li>
+        <li>GraphQL: Alternativa a REST para APIs 📡</li>
+        <li>Web Performance Optimization: Técnicas avanzadas de rendimiento ⚡</li>
+        <li>Accesibilidad Web (A11y): Crear aplicaciones inclusivas ♿</li>
+        <li>Progressive Web Apps (PWA): Experiencias móviles mejoradas 📱</li>
+        <li>WebAssembly: Rendimiento casi nativo en el navegador 🚀</li>
+        <li>Serverless Functions: Para backend sin servidor ☁️</li>
+    </ul>
+
+    <h3>Recomendaciones:</h3>
+    <ol>
+        <li>Practica regularmente construyendo proyectos personales 💻</li>
+        <li>Contribuye a proyectos open source 🌟</li>
+        <li>Sigue blogs y canales de YouTube de desarrolladores destacados 📚</li>
+        <li>Participa en comunidades de desarrollo (foros, meetups) 👥</li>
+        <li>Mantente actualizado con las últimas tendencias y versiones 🔄</li>
+    </ol>
+</section>
+
+<section>
+    <h2>Proyecto Final: Galería de Productos 🛍️</h2>
+    <p>Desarrolla una aplicación web utilizando la API de productos: <a href="https://github.com/IonVillarreal/nestjs-product-gallery" target="_blank">nestjs-product-gallery</a></p>
+
+    <h3>Requisitos del Proyecto:</h3>
+    <ul>
+        <li>Página principal con lista de productos 📋</li>
+        <li>Página de detalle de producto individual 🔍</li>
+        <li>Sistema de inicio de sesión 🔐</li>
+        <li>Panel de administración con funcionalidad CRUD para productos ⚙️</li>
+    </ul>
+
+    <h3>Tecnologías Obligatorias:</h3>
+    <ul>
+        <li>Next.js 🚀</li>
+        <li>Material-UI (MUI) 🎨</li>
+        <li>React Hook Form 📝</li>
+    </ul>
+
+    <h3>Características Opcionales (Bonus):</h3>
+    <ul>
+        <li>Implementación de Server-Side Rendering (SSR) 🖥️</li>
+        <li>Uso de TanStack Query (useQuery) para manejo de estado del servidor 📊</li>
+    </ul>
+
+    <h3>Entrega:</h3>
+    <p>Enviar el enlace del repositorio (GitHub o GitLab) con el proyecto completo 📤</p>
+
+    <p><strong>Nota:</strong> La implementación de SSR y useQuery es opcional, pero se considerará positivamente en la evaluación final.</p>
+</section>
+
+<section>
+    <h2>¡Gracias! 🙏</h2>
+    <p>¿Preguntas?</p>
+</section>

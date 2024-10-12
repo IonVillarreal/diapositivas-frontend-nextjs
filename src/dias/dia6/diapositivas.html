@@ -1,0 +1,816 @@
+<section>
+    <h1>Día 6: Autenticación en Next.js con App Router, MUI y TypeScript</h1>
+    <p>🚀 Módulo de desarrollo Frontend</p>
+    <p>👨‍🏫 Docente: Imanol Villarreal</p>
+</section>
+
+<section>
+    <h2>Agenda del día</h2>
+    <ol>
+        <li>Autenticación en Next.js con App Router</li>
+        <li>Axios vs Fetch</li>
+        <li>useAuth con useContext</li>
+        <li>Protección de rutas con middleware</li>
+        <li>Implementación del Dashboard con MUI</li>
+        <li>Página pública de noticias</li>
+    </ol>
+</section>
+
+<section>
+    <h2>1. Autenticación en Next.js con App Router 🔐</h2>
+    <ul>
+        <li>Manejo de tokens JWT</li>
+        <li>Almacenamiento en cookies</li>
+        <li>Peticiones autenticadas</li>
+    </ul>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" alt="Next.js Logo"
+         style="height: 100px;"/>
+</section>
+
+
+<section>
+    <h2>Configuración Inicial del Proyecto (Parte 1) 🛠️</h2>
+    <ol>
+        <li>Crear un nuevo proyecto Next.js con TypeScript:
+            <pre><code class="language-bash">npx create-next-app@latest mi-proyecto-noticias --typescript</code></pre>
+        </li>
+        <li>Navegar al directorio del proyecto:
+            <pre><code class="language-bash">cd mi-proyecto-noticias</code></pre>
+        </li>
+        <li>Instalar MUI y sus dependencias:
+            <pre><code class="language-bash">npm install @mui/material @emotion/react @emotion/styled @mui/icons-material</code></pre>
+        </li>
+        <li>Instalar Axios para las peticiones HTTP:
+            <pre><code class="language-bash">npm install axios</code></pre>
+        </li>
+        <li>Crear un archivo <code>.env.local</code> en la raíz del proyecto para variables de entorno:
+            <pre><code class="language-plaintext">NEXT_PUBLIC_API_URL=http://localhost:3000</code></pre>
+        </li>
+    </ol>
+</section>
+
+<section>
+    <h2>Variables de Entorno en Next.js 🔐</h2>
+    <ul>
+        <li>Archivos de configuración:
+            <ul>
+                <li><code>.env</code>: Variables para todos los entornos</li>
+                <li><code>.env.local</code>: Variables locales (ignoradas por Git)</li>
+                <li><code>.env.development</code>: Variables específicas de desarrollo</li>
+                <li><code>.env.production</code>: Variables específicas de producción</li>
+            </ul>
+        </li>
+        <li>Acceso en el código:
+            <pre><code class="language-javascript">
+// Accesible en el cliente y servidor
+console.log(process.env.NEXT_PUBLIC_API_URL);
+
+// Solo accesible en el servidor
+console.log(process.env.DATABASE_URL);
+                    </code></pre>
+        </li>
+    </ul>
+</section>
+
+<section>
+    <h2>Configuración Inicial del Proyecto (Parte 2) 🛠️</h2>
+    <ol start="6">
+        <li>Configurar MUI en Next.js:
+            <ul>
+                <li>Crear un archivo <code>app/theme.ts</code>:
+                    <pre><code class="language-typescript">
+import { createTheme } from '@mui/material/styles';
+import { red } from '@mui/material/colors';
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#556cd6',
+    },
+    secondary: {
+      main: '#19857b',
+    },
+    error: {
+      main: red.A400,
+    },
+  },
+  typography: {
+    fontFamily: [
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(','),
+    h1: {
+      fontSize: '2.2rem',
+      fontWeight: 500,
+    },
+    h2: {
+      fontSize: '1.8rem',
+      fontWeight: 500,
+    },
+    body1: {
+      fontSize: '1rem',
+      lineHeight: 1.5,
+    },
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+          borderRadius: 8,
+        },
+      },
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#556cd6',
+        },
+      },
+    },
+  },
+});
+
+export default theme;
+                            </code></pre>
+                </li>
+            </ul>
+        </li>
+        <li>Iniciar el servidor de desarrollo:
+            <pre><code class="language-bash">npm run dev</code></pre>
+        </li>
+    </ol>
+</section>
+
+<section>
+    <h2>Estructura de Carpetas Actualizada 📁</h2>
+    <pre><code class="language-plaintext">
+proyecto-next-auth/
+├── app/
+│   ├── (public)/
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── admin/
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── api/
+│   │   └── ...
+│   ├── layout.tsx
+│   └── page.tsx
+├── components/
+│   └── ...
+├── lib/
+│   └── auth.ts
+└── ...
+            </code></pre>
+</section>
+
+<section>
+    <h2>RootLayout 🌳</h2>
+    <p>Archivo: <code>app/layout.tsx</code></p>
+    <pre><code class="language-typescript">
+import React from 'react';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
+
+const theme = createTheme();
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    &lt;html lang="en"&gt;
+      &lt;body&gt;
+        &lt;AppRouterCacheProvider&gt;
+          &lt;ThemeProvider theme={theme}&gt;
+            &lt;CssBaseline /&gt;
+            {children}
+          &lt;/ThemeProvider&gt;
+        &lt;/AppRouterCacheProvider&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+  )
+}
+            </code></pre>
+</section>
+
+<section>
+    <h2>Layout para Página Pública con Botón de Inicio de Sesión Mejorado 🌐</h2>
+    <p>Archivo: <code>app/(public)/layout.tsx</code></p>
+    <pre><code class="language-typescript">
+import React from 'react';
+import { AppBar, Toolbar, Typography, Container, Button } from '@mui/material';
+import Link from 'next/link';
+import LoginIcon from '@mui/icons-material/Login';
+
+export default function PublicLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    &lt;&gt;
+      &lt;AppBar position="static"&gt;
+        &lt;Toolbar&gt;
+          &lt;Typography variant="h6" component="div" sx={{ flexGrow: 1 }}&gt;
+            Portal de Noticias
+          &lt;/Typography&gt;
+          &lt;Link href="/login" passHref legacyBehavior&gt;
+            &lt;Button
+              color="secondary"
+              variant="contained"
+              startIcon={&lt;LoginIcon /&gt;}
+              sx={{
+                fontWeight: 'bold',
+                textTransform: 'none',
+                borderRadius: '20px',
+                px: 2
+              }}
+            &gt;
+              Iniciar Sesión
+            &lt;/Button&gt;
+          &lt;/Link&gt;
+        &lt;/Toolbar&gt;
+      &lt;/AppBar&gt;
+      &lt;Container sx={{ mt: 4 }}&gt;
+        {children}
+      &lt;/Container&gt;
+    &lt;/&gt;
+  )
+}
+            </code></pre>
+</section>
+
+<section>
+    <h2>Estructura de Carpetas Actualizada 📁</h2>
+    <pre><code class="language-plaintext">
+proyecto-next-auth/
+├── app/
+│   ├── (public)/
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── admin/
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── api/
+│   │   └── ...
+│   ├── layout.tsx
+│   └── page.tsx
+├── components/
+│   └── ...
+├── lib/
+│   └── auth.ts
+└── ...
+            </code></pre>
+</section>
+
+<section>
+    <h2>Ejemplo de login con Axios 📡</h2>
+    <p>Archivo: <code>app/lib/auth.ts</code></p>
+    <pre><code class="language-typescript">
+import axios from 'axios';
+
+interface LoginResponse {
+  token: string;
+}
+
+export const login = async (username: string, password: string) => {
+  try {
+    const response = await axios.post&lt;LoginResponse&gt;('http://localhost:3000/auth/login', {
+      username,
+      password
+    });
+    return response.data.token;
+  } catch (error) {
+    console.error('Login failed:', error);
+    throw error;
+  }
+};
+            </code></pre>
+</section>
+
+<section>
+    <h2>2. Axios vs Fetch 🤔</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Característica</th>
+            <th>Axios</th>
+            <th>Fetch</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Soporte de navegadores</td>
+            <td>Amplio</td>
+            <td>Moderno</td>
+        </tr>
+        <tr>
+            <td>Interceptores</td>
+            <td>✅</td>
+            <td>❌</td>
+        </tr>
+        <tr>
+            <td>Transformación automática</td>
+            <td>✅</td>
+            <td>❌</td>
+        </tr>
+        <tr>
+            <td>Cancelación de peticiones</td>
+            <td>✅</td>
+            <td>Complejo</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>Página Pública de Noticias 📰</h2>
+    <p>Archivo: <code>app/news/page.tsx</code></p>
+    <pre><code class="language-typescript">
+import React from 'react';
+import {
+  Container,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  CardMedia,
+  Button
+} from '@mui/material';
+import Link from 'next/link';
+
+interface News {
+  id: number;
+  title: string;
+  description: string;
+  imageUrl: string;
+}
+
+async function getNews(): Promise&lt;News[]&gt; {
+  const res = await fetch('http://localhost:3000/news', { cache: 'no-store' });
+  if (!res.ok) {
+    throw new Error('Failed to fetch news');
+  }
+  return res.json();
+}
+
+export default async function NewsPage() {
+  const news = await getNews();
+
+  return (
+    &lt;Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}&gt;
+      &lt;Typography variant="h2" component="h1" gutterBottom&gt;
+        Últimas Noticias
+      &lt;/Typography&gt;
+      &lt;Grid container spacing={4}&gt;
+        {news.map((item) =&gt; (
+          &lt;Grid item xs={12} sm={6} md={4} key={item.id}&gt;
+            &lt;Card&gt;
+              &lt;CardMedia
+                component="img"
+                height="140"
+                image={item.imageUrl}
+                alt={item.title}
+              /&gt;
+              &lt;CardContent&gt;
+                &lt;Typography gutterBottom variant="h5" component="div"&gt;
+                  {item.title}
+                &lt;/Typography&gt;
+                &lt;Typography variant="body2" color="text.secondary"&gt;
+                  {item.description.substring(0, 100)}...
+                &lt;/Typography&gt;
+                &lt;Link href={`/news/${item.id}`} passHref legacyBehavior&gt;
+                  &lt;Button variant="contained" color="primary" sx={{ mt: 2 }}&gt;
+                    Leer más
+                  &lt;/Button&gt;
+                &lt;/Link&gt;
+              &lt;/CardContent&gt;
+            &lt;/Card&gt;
+          &lt;/Grid&gt;
+        ))}
+      &lt;/Grid&gt;
+    &lt;/Container&gt;
+  );
+}
+            </code></pre>
+</section>
+
+<section>
+    <h2>Formulario de Inicio de Sesión Simplificado 🔐</h2>
+    <p>Archivo: <code>app/login/page.tsx</code></p>
+    <pre><code class="language-typescript">
+'use client';
+
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Container,
+  Paper
+} from '@mui/material';
+import { useAuth } from '../context/AuthContext';
+
+const schema = z.object({
+  username: z.string().min(1, 'Username is required'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+});
+
+type LoginFormData = z.infer&lt;typeof schema&gt;;
+
+export default function LoginPage() {
+  const { login } = useAuth();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm&lt;LoginFormData&gt;({
+    resolver: zodResolver(schema),
+  });
+
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      await login(data.username, data.password);
+      // Redirect or show success message
+    } catch (error) {
+      console.error('Login failed:', error);
+      // Show error message
+    }
+  };
+
+  return (
+    &lt;Container component="main" maxWidth="xs"&gt;
+      &lt;Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      &gt;
+        &lt;Paper elevation={3} sx={{ padding: 4, width: '100%' }}&gt;
+          &lt;Typography component="h1" variant="h5" align="center" gutterBottom&gt;
+            Inicia sesión
+          &lt;/Typography&gt;
+          &lt;Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate&gt;
+            &lt;TextField
+              {...register('username')}
+              margin="normal"
+              required
+              fullWidth
+              id="username"
+              label="Username"
+              autoComplete="username"
+              autoFocus
+              error={!!errors.username}
+              helperText={errors.username?.message}
+            /&gt;
+            &lt;TextField
+              {...register('password')}
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              error={!!errors.password}
+              helperText={errors.password?.message}
+            /&gt;
+            &lt;Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            &gt;
+              Ingresar
+            &lt;/Button&gt;
+          &lt;/Box&gt;
+        &lt;/Paper&gt;
+      &lt;/Box&gt;
+    &lt;/Container&gt;
+  );
+}
+            </code></pre>
+</section>
+
+<section>
+    <h2>3. useAuth con useContext 🎣</h2>
+    <p>Archivo: <code>app/context/AuthContext.tsx</code></p>
+    <pre><code class="language-typescript">
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { login as authLogin } from '../lib/auth';
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+interface User {
+    id: number;
+    username: string;
+}
+
+interface AuthContextType {
+    user: User | null;
+    login: (username: string, password: string) => Promise&lt;void&gt;;
+    logout: () => void;
+}
+
+const AuthContext = createContext&lt;AuthContextType | undefined&gt;(undefined);
+
+export const AuthProvider: React.FC&lt;{children: React.ReactNode}&gt; = ({ children }) => {
+    const [user, setUser] = useState&lt;User | null&gt;(null);
+    const router = useRouter();
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const token = Cookies.get('token');
+            if (token) {
+                try {
+                    const response = await fetch(`${API_URL}/user/me`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    if (response.ok) {
+                        const userData = await response.json();
+                        setUser(userData);
+                    } else {
+                        Cookies.remove('token');
+                    }
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
+                    Cookies.remove('token');
+                }
+            }
+        };
+
+        fetchUser();
+    }, []);
+
+    const login = async (username: string, password: string) => {
+        try {
+            const token = await authLogin(username, password);
+            Cookies.set('token', token, { expires: 7 });
+            const response = await fetch(`${API_URL}/user/me`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (response.ok) {
+                const userData = await response.json();
+                setUser(userData);
+                router.push('/admin');
+            } else {
+                throw new Error('Failed to fetch user data');
+            }
+        } catch (error) {
+            console.error('Login failed:', error);
+            throw error;
+        }
+    };
+
+    const logout = () => {
+        Cookies.remove('token');
+        setUser(null);
+        router.push('/');
+    };
+
+    return (
+        &lt;AuthContext.Provider value={{ user, login, logout }}&gt;
+            {children}
+        &lt;/AuthContext.Provider&gt;
+    );
+};
+
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+    if (context === undefined) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
+};
+            </code></pre>
+</section>
+
+<section>
+    <h2>Actualizando RootLayout con AuthProvider 🌳</h2>
+    <p>Archivo: <code>app/layout.tsx</code></p>
+    <pre><code class="language-typescript">
+import React from 'react';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
+import { AuthProvider } from './context/AuthContext';
+
+const theme = createTheme();
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    &lt;html lang="en"&gt;
+      &lt;body&gt;
+        &lt;AppRouterCacheProvider&gt;
+          &lt;ThemeProvider theme={theme}&gt;
+            &lt;CssBaseline /&gt;
+            &lt;AuthProvider&gt;
+              {children}
+            &lt;/AuthProvider&gt;
+          &lt;/ThemeProvider&gt;
+        &lt;/AppRouterCacheProvider&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+  )
+}
+            </code></pre>
+</section>
+
+
+<section>
+    <h2>4. Protección de rutas con middleware 🛡️</h2>
+    <p>Archivo: <code>middleware.ts</code> (en la raíz del proyecto)</p>
+    <pre><code class="language-typescript">
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+
+export function middleware(request: NextRequest) {
+  const token = request.cookies.get('token')?.value;
+
+  if (!token && request.nextUrl.pathname.startsWith('/admin')) {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ['/admin/:path*'],
+};
+            </code></pre>
+</section>
+
+<section>
+    <h2>Layout para Página Protegida 🔒</h2>
+    <p>Archivo: <code>app/admin/layout.tsx</code></p>
+    <pre><code class="language-typescript">
+'use client'
+
+import React from 'react';
+import { AppBar, Toolbar, Typography, Container, Button } from '@mui/material';
+import { useAuth } from '../context/AuthContext';
+import { useRouter } from 'next/navigation';
+
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  const { user, logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout();
+    router.push('/login');
+  };
+
+  return (
+    &lt;&gt;
+      &lt;AppBar position="static"&gt;
+        &lt;Toolbar&gt;
+          &lt;Typography variant="h6" component="div" sx={{ flexGrow: 1 }}&gt;
+            Panel de Administración
+          &lt;/Typography&gt;
+          {user && (
+            &lt;&gt;
+              &lt;Typography variant="subtitle1" sx={{ mr: 2 }}&gt;
+                Bienvenido, {user.username}
+              &lt;/Typography&gt;
+              &lt;Button color="inherit" onClick={handleLogout}&gt;Cerrar Sesión&lt;/Button&gt;
+            &lt;/&gt;
+          )}
+        &lt;/Toolbar&gt;
+      &lt;/AppBar&gt;
+      &lt;Container sx={{ mt: 4 }}&gt;
+        {children}
+      &lt;/Container&gt;
+    &lt;/&gt;
+  )
+}
+            </code></pre>
+</section>
+
+<section>
+    <h2>5. Implementación del Panel de Control con MUI 📊</h2>
+    <p>Archivo: <code>app/admin/page.tsx</code></p>
+    <pre><code class="language-typescript">
+'use client'
+
+import React, { useEffect, useState } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { Container, Typography, List, ListItem, ListItemText, Button, Box } from '@mui/material';
+import axios from 'axios';
+
+interface News {
+  id: number;
+  title: string;
+}
+
+const Dashboard: React.FC = () => {
+  const { user } = useAuth();
+  const [news, setNews] = useState&lt;News[]&gt;([]);
+
+  useEffect(() => {
+    fetchNews();
+  }, []);
+
+  const fetchNews = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/news', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setNews(response.data);
+    } catch (error) {
+      console.error('Error al cargar noticias:', error);
+    }
+  };
+
+  const addNews = async () => {
+
+  };
+
+  const updateNews = async (id: number) => {
+
+  };
+
+  const deleteNews = async (id: number) => {
+
+  };
+
+  return (
+    &lt;Container maxWidth="md"&gt;
+      &lt;Box sx={{ my: 4 }}&gt;
+        &lt;Typography variant="h4" component="h1" gutterBottom&gt;
+          Bienvenido, {user?.username}!
+        &lt;/Typography&gt;
+        &lt;Typography variant="h5" component="h2" gutterBottom&gt;
+          Gestión de Noticias
+        &lt;/Typography&gt;
+        &lt;Button variant="contained" color="primary" onClick={addNews} sx={{ mb: 2 }}&gt;
+          Agregar Noticia
+        &lt;/Button&gt;
+        &lt;List&gt;
+          {news.map((item) => (
+            &lt;ListItem key={item.id} sx={{ bgcolor: 'background.paper', mb: 1, borderRadius: 1 }}&gt;
+              &lt;ListItemText primary={item.title} /&gt;
+              &lt;Button onClick={() => updateNews(item.id)} color="info" sx={{ mr: 1 }}&gt;Actualizar&lt;/Button&gt;
+              &lt;Button onClick={() => deleteNews(item.id)} color="error"&gt;Eliminar&lt;/Button&gt;
+            &lt;/ListItem&gt;
+          ))}
+        &lt;/List&gt;
+      &lt;/Box&gt;
+    &lt;/Container&gt;
+  );
+};
+
+export default Dashboard;
+            </code></pre>
+</section>
+
+
+<section>
+    <h2>Resumen 📝</h2>
+    <ul>
+        <li>Implementamos autenticación en Next.js con App Router</li>
+        <li>Creamos un contexto de autenticación con useAuth</li>
+        <li>Protegimos rutas de administración con middleware</li>
+        <li>Desarrollamos un dashboard protegido con opciones de CRUD</li>
+        <li>Creamos una página pública de noticias sin protección</li>
+    </ul>
+</section>
+
+<section>
+    <h2>¡Gracias! 🙏</h2>
+    <p>¿Preguntas?</p>
+</section>

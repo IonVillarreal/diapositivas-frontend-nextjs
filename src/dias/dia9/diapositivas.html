@@ -1,0 +1,688 @@
+<section>
+    <h1>Día 9: Optimización de Rendimiento 🚀</h1>
+    <p>Módulo de desarrollo Frontend</p>
+    <p>👨‍🏫 Docente: Imanol Villarreal</p>
+</section>
+
+<section>
+    <h2>Agenda del Día ⏰</h2>
+    <ol>
+        <li>Optimización de imágenes y assets 🖼️</li>
+        <li>Lazy loading y Code Splitting en App Router 🧩</li>
+        <li>Uso de @next/bundle-analyzer 📊</li>
+        <li>Importación dinámica con zxcvbn-typescript 🔐</li>
+        <li>Importación de mapas con CSR y SSR 🗺️</li>
+        <li>Resumen 📝</li>
+    </ol>
+</section>
+
+<section>
+    <h2>1. Optimización de imágenes y assets 🖼️</h2>
+    <ul>
+        <li>Uso del componente Image de Next.js <i class="devicon-nextjs-original colored"></i></li>
+        <li>Formatos de imagen modernos (WebP, AVIF)</li>
+        <li>Optimización de fuentes</li>
+        <li>Manejo de assets estáticos</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Ejemplo de optimización de imágenes 🖼️</h2>
+    <pre><code class="hljs language-jsx" data-trim contenteditable>
+import Image from 'next/image'
+
+function ProductImage({ src, alt }) {
+  return (
+    &lt;Image
+      src={src}
+      alt={alt}
+      width={500}
+      height={300}
+      layout="responsive"
+      placeholder="blur"
+      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg=="
+    /&gt;
+  )
+}
+    </code></pre>
+</section>
+
+<section>
+    <h2>Configuración de next.config.js para Imágenes Externas 🛠️</h2>
+    <p>Para usar imágenes de dominios externos como picsum.photos con el componente Image de Next.js, necesitas configurar el archivo <code>next.config.js</code>:</p>
+    <pre><code class="hljs language-javascript" data-trim contenteditable>
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  images: {
+    domains: ['picsum.photos'],
+  },
+}
+
+module.exports = nextConfig
+    </code></pre>
+    <ul>
+        <li>Añade el dominio 'picsum.photos' en la configuración de imágenes.</li>
+        <li>Esto permite a Next.js optimizar y servir imágenes desde este dominio.</li>
+        <li>Asegúrate de agregar cualquier otro dominio externo que uses para imágenes.</li>
+    </ul>
+    <p>Después de hacer estos cambios, reinicia tu servidor de desarrollo para que surtan efecto.</p>
+</section>
+
+<section>
+    <h2>Página de Noticias con Componente Image de Next.js 📰🖼️</h2>
+    <p>Archivo: <code>app/news/page.tsx</code></p>
+    <pre><code class="hljs language-tsx" data-trim contenteditable>
+import React from 'react';
+import {
+    Container,
+    Typography,
+    Card,
+    CardContent,
+    Button
+} from '@mui/material';
+import Link from 'next/link';
+import Grid from '@mui/material/Grid2';
+import Image from 'next/image';
+
+interface News {
+    id: number;
+    title: string;
+    description: string;
+    imageUrl: string;
+}
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+async function getNews(): Promise&lt;{
+    news: News[];
+    totalCount: number;
+}&gt; {
+    const res = await fetch(`${API_URL}/news`);
+    if (!res.ok) {
+        throw new Error('Failed to fetch news');
+    }
+    return res.json();
+}
+
+export default async function NewsPage() {
+    const {news} = await getNews();
+
+    return (
+        &lt;Container maxWidth="lg" sx={{mt: 4, mb: 4}}&gt;
+            &lt;Typography variant="h2" component="h1" gutterBottom&gt;
+                Últimas Noticias
+            &lt;/Typography&gt;
+            &lt;Grid container spacing={4}&gt;
+                {news.map((item) =&gt; (
+                    &lt;Grid
+                        size={{xs: 12, sm: 6, md: 4}}
+                        key={item.id}&gt;
+                        &lt;Card&gt;
+                            &lt;Image
+                                src={`https://picsum.photos/id/${item.id}/500/300`}
+                                alt={item.title}
+                                width={500}
+                                height={300}
+                                layout="responsive"
+                                placeholder="blur"
+                                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg=="
+                            /&gt;
+                            &lt;CardContent&gt;
+                                &lt;Typography gutterBottom variant="h5" component="div"&gt;
+                                    {item.title}
+                                &lt;/Typography&gt;
+                                &lt;Typography variant="body2" color="text.secondary"&gt;
+                                    {item.description.substring(0, 100)}...
+                                &lt;/Typography&gt;
+                                &lt;Link href={`/news/${item.id}`} passHref legacyBehavior&gt;
+                                    &lt;Button variant="contained" color="primary" sx={{mt: 2}}&gt;
+                                        Leer más
+                                    &lt;/Button&gt;
+                                &lt;/Link&gt;
+                            &lt;/CardContent&gt;
+                        &lt;/Card&gt;
+                    &lt;/Grid&gt;
+                ))}
+            &lt;/Grid&gt;
+        &lt;/Container&gt;
+    );
+}
+    </code></pre>
+    <p>Este ejemplo muestra cómo integrar el componente Image de Next.js en una página de noticias, aprovechando sus características de optimización y lazy loading.</p>
+</section>
+
+<section>
+    <h2>Ejemplo Completo de Lazy Loading en Next.js con App Router 🐢</h2>
+    <p>Vamos a crear una página de ejemplo con varios componentes cargados de forma lazy usando App Router.</p>
+</section>
+
+<section>
+    <h3>Paso 1: Creación de Componentes 🧱</h3>
+    <p>Primero, creamos los componentes que cargaremos de forma lazy.</p>
+    <p>Archivo: <code>app/components/Header.tsx</code></p>
+    <pre><code class="hljs language-tsx" data-trim contenteditable>
+import React from 'react';
+import Link from 'next/link';
+
+const Header: React.FC = () => (
+  &lt;header&gt;
+    &lt;h1&gt;Mi Aplicación Next.js&lt;/h1&gt;
+    &lt;nav&gt;
+      &lt;ul&gt;
+        &lt;li&gt;&lt;Link href="/"&gt;Inicio&lt;/Link&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;Link href="/about"&gt;Acerca de&lt;/Link&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;Link href="/contact"&gt;Contacto&lt;/Link&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/nav&gt;
+  &lt;/header&gt;
+);
+
+export default Header;
+    </code></pre>
+</section>
+
+<section>
+    <h3>Paso 1: Creación de Componentes (continuación) 🧱</h3>
+    <p>Archivo: <code>app/components/HeavyComponent.tsx</code></p>
+    <pre><code class="hljs language-tsx" data-trim contenteditable>
+'use client'
+
+import React, { useEffect, useState } from 'react';
+
+const HeavyComponent: React.FC = () => {
+  const [data, setData] = useState&lt;string[]&gt;([]);
+
+  useEffect(() => {
+    // Simulamos una carga pesada
+    setTimeout(() => {
+      setData(['Elemento 1', 'Elemento 2', 'Elemento 3']);
+    }, 2000);
+  }, []);
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Componente Pesado&lt;/h2&gt;
+      &lt;ul&gt;
+        {data.map((item, index) => (
+          &lt;li key={index}&gt;{item}&lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  );
+};
+
+export default HeavyComponent;
+    </code></pre>
+</section>
+
+<section>
+    <h3>Paso 2: Implementación de Lazy Loading 🚀</h3>
+    <p>Ahora, creamos la página principal con lazy loading.</p>
+    <p>Archivo: <code>app/page.tsx</code></p>
+    <pre><code class="hljs language-tsx" data-trim contenteditable>
+import React, { Suspense } from 'react';
+import dynamic from 'next/dynamic';
+
+const DynamicHeader = dynamic(() => import('./components/Header'), {
+  loading: () => &lt;p&gt;Cargando encabezado...&lt;/p&gt;,
+});
+
+const DynamicHeavyComponent = dynamic(() => import('./components/HeavyComponent'), {
+  loading: () => &lt;p&gt;Cargando componente pesado...&lt;/p&gt;,
+  ssr: false, // Desactivamos SSR para este componente
+});
+
+export default function HomePage() {
+  return (
+    &lt;div&gt;
+      &lt;Suspense fallback={&lt;p&gt;Cargando...&lt;/p&gt;}&gt;
+        &lt;DynamicHeader /&gt;
+      &lt;/Suspense&gt;
+
+      &lt;main&gt;
+        &lt;h2&gt;Bienvenido a nuestra página&lt;/h2&gt;
+        &lt;p&gt;Este es un ejemplo de lazy loading en Next.js con App Router&lt;/p&gt;
+
+        &lt;Suspense fallback={&lt;p&gt;Cargando componente pesado...&lt;/p&gt;}&gt;
+          &lt;DynamicHeavyComponent /&gt;
+        &lt;/Suspense&gt;
+      &lt;/main&gt;
+    &lt;/div&gt;
+  );
+}
+    </code></pre>
+</section>
+
+<section>
+    <h3>Explicación del Lazy Loading con App Router 🧠</h3>
+    <ul>
+        <li><code>dynamic</code> de Next.js se usa para importar componentes de forma dinámica.</li>
+        <li>La opción <code>loading</code> especifica qué mostrar mientras el componente se carga.</li>
+        <li><code>Suspense</code> de React se usa para manejar el estado de carga de los componentes.</li>
+        <li><code>ssr: false</code> se usa en <code>DynamicHeavyComponent</code> para evitar el renderizado en el servidor, útil para componentes que dependen del navegador.</li>
+        <li>El componente <code>HeavyComponent</code> usa 'use client' para indicar que es un Client Component.</li>
+    </ul>
+</section>
+
+<section>
+    <h3>Beneficios del Lazy Loading en App Router 📊</h3>
+    <ul>
+        <li>Reduce el tiempo de carga inicial de la página.</li>
+        <li>Mejora el rendimiento al cargar componentes solo cuando son necesarios.</li>
+        <li>Permite una experiencia de usuario más fluida, especialmente en conexiones lentas.</li>
+        <li>Facilita la gestión de componentes pesados o que dependen del cliente.</li>
+        <li>Se integra bien con la filosofía de Server Components de App Router.</li>
+    </ul>
+</section>
+
+<section>
+    <h3>Consejos para el Lazy Loading con App Router 💡</h3>
+    <ul>
+        <li>Usa lazy loading para componentes grandes o que no son críticos para la carga inicial.</li>
+        <li>Considera el uso de <code>ssr: false</code> para componentes que dependen de APIs del navegador.</li>
+        <li>Utiliza Server Components por defecto y Client Components solo cuando sea necesario.</li>
+        <li>Aprovecha las capacidades de streaming de App Router para una carga progresiva.</li>
+        <li>Usa herramientas de análisis de rendimiento para identificar oportunidades de optimización.</li>
+    </ul>
+</section>
+
+<section>
+    <h2>3. Uso de @next/bundle-analyzer 📊</h2>
+    <p>Herramienta para analizar el tamaño del bundle de tu aplicación Next.js</p>
+    <ol>
+        <li>Instalar: <code>npm install --save-dev @next/bundle-analyzer</code></li>
+        <li>Configurar en next.config.js:</li>
+    </ol>
+    <pre><code class="hljs language-typescript" data-trim contenteditable>
+import bundleAnalyzer from '@next/bundle-analyzer';
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+});
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // Tu configuración existente aquí
+};
+
+export default withBundleAnalyzer(nextConfig);
+    </code></pre>
+    <p>Para usar: <code>ANALYZE=true npm run build</code></p>
+</section>
+
+<section>
+    <h2>Importación Dinámica en Next.js con App Router 🚀</h2>
+    <p>Vamos a explorar cómo utilizar la importación dinámica para optimizar el rendimiento de nuestra aplicación Next.js.</p>
+    <ul>
+        <li>Qué es la importación dinámica 🤔</li>
+        <li>Ventajas de usar importación dinámica 📈</li>
+        <li>Cómo implementar importación dinámica en Next.js 🛠️</li>
+        <li>Comparación entre importación estática y dinámica 🔄</li>
+        <li>Casos de uso comunes 💡</li>
+    </ul>
+</section>
+
+<section>
+    <h2>PasswordStrength (Importación Directa) 🔒</h2>
+    <p>Archivo: <code>src/components/PasswordStrengthDirect.tsx</code></p>
+    <pre><code class="hljs language-tsx" data-trim contenteditable>
+import React, { useEffect } from 'react';
+import { Typography, LinearProgress } from '@mui/material';
+import zxcvbn from 'zxcvbn-typescript';
+
+interface PasswordStrengthProps {
+  password: string;
+  setStrength: (strength: number) => void;
+}
+
+const PasswordStrengthDirect: React.FC&lt;PasswordStrengthProps&gt; = ({ password, setStrength }) => {
+  useEffect(() => {
+    if (password) {
+      const result = zxcvbn(password);
+      setStrength(result.score);
+    }
+  }, [password, setStrength]);
+
+  const getStrengthLabel = (score: number): string => {
+    const labels = ['Muy débil', 'Débil', 'Moderada', 'Fuerte', 'Muy fuerte'];
+    return labels[score] || '';
+  };
+
+  const score = zxcvbn(password).score;
+
+  return (
+    &lt;div&gt;
+      &lt;Typography variant="body2"&gt;
+        Fuerza de la contraseña: {getStrengthLabel(score)}
+      &lt;/Typography&gt;
+      &lt;LinearProgress
+        variant="determinate"
+        value={(score / 4) * 100}
+        color={score &lt; 3 ? 'error' : 'success'}
+      /&gt;
+    &lt;/div&gt;
+  );
+};
+
+export default PasswordStrengthDirect;
+    </code></pre>
+</section>
+
+<section>
+    <h2>Página de Cambio de Contraseña (Importación Directa) 🔐</h2>
+    <p>Archivo: <code>src/app/change-password-direct/page.tsx</code></p>
+    <pre><code class="hljs language-tsx" data-trim contenteditable>
+'use client';
+
+import React, { useState } from 'react';
+import { TextField, Button, Box, Typography } from '@mui/material';
+import PasswordStrengthDirect from '../../components/PasswordStrengthDirect';
+
+const ChangePasswordDirect: React.FC = () => {
+  const [password, setPassword] = useState('');
+  const [strength, setStrength] = useState(0);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Cambio de contraseña enviado (Importación Directa)');
+  };
+
+  return (
+    &lt;Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 400, margin: 'auto', mt: 4 }}&gt;
+      &lt;Typography variant="h4" component="h1" gutterBottom&gt;
+        Cambiar Contraseña (Importación Directa)
+      &lt;/Typography&gt;
+      &lt;TextField
+        fullWidth
+        type="password"
+        label="Nueva Contraseña"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        margin="normal"
+      /&gt;
+      &lt;PasswordStrengthDirect password={password} setStrength={setStrength} /&gt;
+      &lt;Button
+        type="submit"
+        variant="contained"
+        color="primary"
+        disabled={strength &lt; 3}
+        sx={{ mt: 2 }}
+      &gt;
+        Cambiar Contraseña
+      &lt;/Button&gt;
+    &lt;/Box&gt;
+  );
+};
+
+export default ChangePasswordDirect;
+    </code></pre>
+</section>
+
+<section>
+    <h2>PasswordStrength (Importación Dinámica) 🔄</h2>
+    <p>Archivo: <code>src/components/PasswordStrengthDynamic.tsx</code></p>
+    <pre><code class="hljs language-tsx" data-trim contenteditable>
+import React, { useState, useEffect } from 'react';
+import { Typography, LinearProgress, CircularProgress } from '@mui/material';
+
+interface PasswordStrengthProps {
+  password: string;
+  setStrength: (strength: number) => void;
+}
+
+type ZxcvbnType = (password: string) => { score: number };
+
+const PasswordStrengthDynamic: React.FC&lt;PasswordStrengthProps&gt; = ({ password, setStrength }) => {
+  const [zxcvbn, setZxcvbn] = useState&lt;ZxcvbnType | null&gt;(null);
+  const [score, setScore] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    import('zxcvbn-typescript')
+      .then((module) => {
+        setZxcvbn(() => module.default as ZxcvbnType);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error loading zxcvbn:', error);
+        setIsLoading(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (zxcvbn && password) {
+      try {
+        const result = zxcvbn(password);
+        setScore(result.score);
+        setStrength(result.score);
+      } catch (error) {
+        console.error('Error evaluating password strength:', error);
+        setScore(0);
+        setStrength(0);
+      }
+    }
+  }, [zxcvbn, password, setStrength]);
+
+  const getStrengthLabel = (score: number): string => {
+    const labels = ['Muy débil', 'Débil', 'Moderada', 'Fuerte', 'Muy fuerte'];
+    return labels[score] || '';
+  };
+
+  if (isLoading) return &lt;CircularProgress /&gt;;
+
+  return (
+    &lt;div&gt;
+      &lt;Typography variant="body2"&gt;
+        Fuerza de la contraseña: {getStrengthLabel(score)}
+      &lt;/Typography&gt;
+      &lt;LinearProgress
+        variant="determinate"
+        value={(score / 4) * 100}
+        color={score &lt; 3 ? 'error' : 'success'}
+      /&gt;
+    &lt;/div&gt;
+  );
+};
+
+export default PasswordStrengthDynamic;
+    </code></pre>
+</section>
+
+<section>
+    <h2>Página de Cambio de Contraseña (Importación Dinámica) 🔄</h2>
+    <p>Archivo: <code>src/app/change-password-dynamic/page.tsx</code></p>
+    <pre><code class="hljs language-tsx" data-trim contenteditable>
+'use client';
+
+import React, { useState } from 'react';
+import { TextField, Button, Box, Typography } from '@mui/material';
+import dynamic from 'next/dynamic';
+
+interface PasswordStrengthProps {
+  password: string;
+  setStrength: (strength: number) => void;
+}
+
+const DynamicPasswordStrength = dynamic&lt;PasswordStrengthProps&gt;(
+  () => import('../../components/PasswordStrengthDynamic'),
+  { ssr: false, loading: () => &lt;p&gt;Cargando...&lt;/p&gt; }
+);
+
+const ChangePasswordDynamic: React.FC = () => {
+  const [password, setPassword] = useState('');
+  const [strength, setStrength] = useState(0);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Cambio de contraseña enviado (Importación Dinámica)');
+  };
+
+  return (
+    &lt;Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 400, margin: 'auto', mt: 4 }}&gt;
+      &lt;Typography variant="h4" component="h1" gutterBottom&gt;
+        Cambiar Contraseña (Importación Dinámica)
+      &lt;/Typography&gt;
+      &lt;TextField
+        fullWidth
+        type="password"
+        label="Nueva Contraseña"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        margin="normal"
+      /&gt;
+      &lt;DynamicPasswordStrength password={password} setStrength={setStrength} /&gt;
+      &lt;Button
+        type="submit"
+        variant="contained"
+        color="primary"
+        disabled={strength &lt; 3}
+        sx={{ mt: 2 }}
+      &gt;
+        Cambiar Contraseña
+      &lt;/Button&gt;
+    &lt;/Box&gt;
+  );
+};
+
+export default ChangePasswordDynamic;
+    </code></pre>
+</section>
+
+<section>
+    <h2>Importación Dinámica de Mapas en Next.js 🗺️</h2>
+    <p>Vamos a crear una página de contacto con un mapa cargado dinámicamente.</p>
+    <ul>
+        <li>Utilizaremos react-leaflet para el mapa</li>
+        <li>La importación dinámica mejorará el rendimiento inicial</li>
+        <li>El mapa se cargará solo en el lado del cliente</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Componente del Mapa 🗺️</h2>
+    <p>Archivo: <code>src/components/Map.tsx</code></p>
+    <pre><code class="hljs language-tsx" data-trim contenteditable>
+import React from 'react';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+interface MapProps {
+  center: [number, number];
+  zoom: number;
+}
+
+const customIcon = new L.Icon({
+  iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
+const Map: React.FC&lt;MapProps&gt; = ({ center, zoom }) => {
+  return (
+    &lt;MapContainer
+      key={`${center[0]}-${center[1]}-${zoom}`}
+      center={center}
+      zoom={zoom}
+      style={{ height: '400px', width: '100%' }}
+    &gt;
+      &lt;TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; &lt;a href="https://www.openstreetmap.org/copyright"&gt;OpenStreetMap&lt;/a&gt; contributors'
+      /&gt;
+      &lt;Marker position={center} icon={customIcon}&gt;
+        &lt;Popup&gt;
+          Nuestra ubicación en Bolivia
+        &lt;/Popup&gt;
+      &lt;/Marker&gt;
+    &lt;/MapContainer&gt;
+  );
+};
+
+export default Map;
+    </code></pre>
+</section>
+
+<section>
+    <h2>Página de Contacto con Mapa dinámico 📍</h2>
+    <p>Archivo: <code>src/app/contact/page.tsx</code></p>
+    <pre><code class="hljs language-tsx" data-trim contenteditable>
+'use client';
+
+import React from 'react';
+import dynamic from 'next/dynamic';
+import { Box, Typography, Container, TextField, Button } from '@mui/material';
+
+const DynamicMap = dynamic(() => import('../../components/Map'), {
+  ssr: false,
+  loading: () => &lt;p&gt;Cargando mapa...&lt;/p&gt;
+});
+
+const ContactPage: React.FC = () => {
+  // Coordenadas de La Paz, Bolivia
+  const laPazCoordinates: [number, number] = [-16.5000, -68.1500];
+
+  return (
+    &lt;Container maxWidth="md"&gt;
+      &lt;Box sx={{ my: 4 }}&gt;
+        &lt;Typography variant="h2" component="h1" gutterBottom&gt;
+          Contáctanos en Bolivia
+        &lt;/Typography&gt;
+        &lt;Typography variant="body1" paragraph&gt;
+          Estamos ubicados en La Paz, Bolivia. Puedes visitarnos o contactarnos por teléfono o email.
+        &lt;/Typography&gt;
+        &lt;Box sx={{ height: 400, width: '100%', my: 2 }}&gt;
+          &lt;DynamicMap center={laPazCoordinates} zoom={13} /&gt;
+        &lt;/Box&gt;
+        &lt;Typography variant="h4" component="h2" gutterBottom&gt;
+          Formulario de Contacto
+        &lt;/Typography&gt;
+        &lt;Box component="form" noValidate autoComplete="off" sx={{ mt: 2 }}&gt;
+          &lt;TextField fullWidth label="Nombre" margin="normal" /&gt;
+          &lt;TextField fullWidth label="Email" type="email" margin="normal" /&gt;
+          &lt;TextField fullWidth label="Mensaje" multiline rows={4} margin="normal" /&gt;
+          &lt;Button variant="contained" color="primary" sx={{ mt: 2 }}&gt;
+            Enviar Mensaje
+          &lt;/Button&gt;
+        &lt;/Box&gt;
+        &lt;Box sx={{ mt: 4 }}&gt;
+          &lt;Typography variant="body1"&gt;
+            Dirección: Av. 16 de Julio 1490, La Paz, Bolivia
+          &lt;/Typography&gt;
+          &lt;Typography variant="body1"&gt;
+            Teléfono: +591 2 2123456
+          &lt;/Typography&gt;
+          &lt;Typography variant="body1"&gt;
+            Email: contacto@ejemplo.com.bo
+          &lt;/Typography&gt;
+        &lt;/Box&gt;
+      &lt;/Box&gt;
+    &lt;/Container&gt;
+  );
+};
+
+export default ContactPage;
+    </code></pre>
+</section>
+
+<section>
+    <h2>Resumen 📝</h2>
+    <ul>
+        <li>La optimización de imágenes y assets es crucial para el rendimiento 🖼️</li>
+        <li>Lazy loading y code splitting mejoran la carga inicial de la aplicación 🧩</li>
+        <li>@next/bundle-analyzer ayuda a identificar oportunidades de optimización 📊</li>
+        <li>La importación dinámica mejora el rendimiento de funcionalidades pesadas 🔐</li>
+        <li>CSR y SSR ofrecen diferentes enfoques para la carga de componentes 🗺️</li>
+    </ul>
+</section>
+
+<section>
+    <h2>¡Gracias! 🙏</h2>
+    <p>¿Preguntas?</p>
+</section>
+

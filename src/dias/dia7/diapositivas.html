@@ -1,0 +1,1125 @@
+<section>
+    <h1>Día 7: Introducción a TanStack Query en Next.js App Router</h1>
+    <p>Módulo de desarrollo Frontend</p>
+    <p>👨‍🏫 Docente: Imanol Villarreal</p>
+</section>
+
+<section>
+    <h2>Agenda del Día 📅</h2>
+    <ol>
+        <li>Introducción a TanStack Query 🌟</li>
+        <li>Configuración de TanStack Query en Next.js ⚙️</li>
+        <li>useQuery hook en profundidad 🎣</li>
+        <li>Manejo de estados de carga y error 🚦</li>
+        <li>Paginación y scroll infinito 📜</li>
+        <li>Resumen y tarea 📝</li>
+    </ol>
+</section>
+
+<section>
+    <h2>1. Introducción a TanStack Query 🌟</h2>
+    <ul>
+        <li>¿Qué es TanStack Query y por qué usarlo? 🤔</li>
+        <li>Ventajas sobre fetch y SWR 💪</li>
+        <li>Conceptos clave: Queries, Mutations, Invalidations 🗝️</li>
+        <li>Caching y sincronización de estado del servidor 🔄</li>
+    </ul>
+</section>
+
+<section>
+    <h2>¿Qué es TanStack Query? 🤔</h2>
+    <ul>
+        <li>Biblioteca para gestión de estado del servidor en React 📚</li>
+        <li>Simplifica la obtención, caching y sincronización de datos 🔄</li>
+        <li>Reduce significativamente el código boilerplate 📉</li>
+        <li>Optimiza el rendimiento y la experiencia del usuario 🚀</li>
+    </ul>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React Logo"
+         style="height: 50px;"/>
+</section>
+
+<section>
+    <h2>Instalación de TanStack Query v5 en Next.js 📦</h2>
+
+    <h3>1. Instalación de paquetes</h3>
+    <pre><code class="language-bash">npm install @tanstack/react-query@5</code></pre>
+
+    <h3>2. Instalación opcional de DevTools</h3>
+    <pre><code class="language-bash">npm install @tanstack/react-query-devtools@5</code></pre>
+
+    <h3>Notas Importantes ℹ️</h3>
+    <ul>
+        <li>Asegúrate de usar la versión 5 de TanStack Query</li>
+        <li>Las DevTools son opcionales pero muy útiles durante el desarrollo</li>
+        <li>TanStack Query v5 requiere React 18 o superior</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Configuración de TanStack Query v5 en Next.js (Parte 1) 🛠️</h2>
+
+    <h3>Crear Provider</h3>
+    <p>Crea un archivo <code>app/providers/ReactQueryProvider.tsx</code>:</p>
+    <pre><code class="language-typescript">
+'use client'
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
+
+const ReactQueryProvider = ({ children }: { children: React.ReactNode }) => {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            refetchOnWindowFocus: false,
+          },
+        },
+      })
+  )
+
+  return (
+    &lt;QueryClientProvider client={queryClient}&gt;{children}&lt;/QueryClientProvider&gt;
+  )
+}
+
+export default ReactQueryProvider
+            </code></pre>
+</section>
+
+<section>
+    <h2>Configuración de TanStack Query v5 en Next.js (Parte 2) 🔗</h2>
+
+    <h3>Integración en App Router</h3>
+    <p>Actualiza <code>app/layout.tsx</code>:</p>
+    <pre><code class="language-typescript">
+import ReactQueryProvider from './providers/ReactQueryProvider'
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    &lt;html lang="en"&gt;
+      &lt;body&gt;
+        &lt;ReactQueryProvider&gt;
+          {children}
+        &lt;/ReactQueryProvider&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+  )
+}
+            </code></pre>
+
+    <h3>Notas Adicionales 📝</h3>
+    <ul>
+        <li>El provider usa 'use client' para funcionar en el lado del cliente</li>
+        <li>refetchOnWindowFocus está desactivado por defecto en esta configuración</li>
+        <li>Puedes ajustar más opciones en defaultOptions según tus necesidades</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Ventajas de TanStack Query 💪</h2>
+    <ul>
+        <li>Gestión de estado del servidor declarativa 📢</li>
+        <li>Caching y deduplicación automática de solicitudes 🗃️</li>
+        <li>Sincronización y actualización en segundo plano 🔄</li>
+        <li>Manejo de errores y reintentos integrado 🛠️</li>
+        <li>Paginación y carga infinita simplificadas 📜</li>
+        <li>Soporte nativo para TypeScript 📘</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Página con useEffect en Next.js App Router 🔄</h2>
+    <p>Archivo: <code>app/posts-use-effect/page.tsx</code></p>
+    <pre><code class="language-typescript">
+'use client'
+
+import React, { useEffect, useState } from 'react';
+
+interface Post {
+  id: number;
+  title: string;
+}
+
+export default function PostsPageWithUseEffect() {
+  const [posts, setPosts] = useState&lt;Post[]&gt;([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState&lt;Error | null&gt;(null);
+
+  useEffect(() => {
+    fetch('https://jsonplaceholder.typicode.com/posts')
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch');
+        return res.json();
+      })
+      .then((data: Post[]) => {
+        setPosts(data);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        setError(err);
+        setIsLoading(false);
+      });
+  }, []);
+
+  if (isLoading) return &lt;div&gt;Cargando...&lt;/div&gt;
+  if (error) return &lt;div&gt;Error: {error.message}&lt;/div&gt;
+
+  return (
+    &lt;&gt;
+      &lt;h1&gt;Posts (usando useEffect)&lt;/h1&gt;
+      &lt;ul&gt;
+        {posts.map(post => (
+          &lt;li key={post.id}&gt;{post.title}&lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/&gt;
+  );
+}
+            </code></pre>
+</section>
+
+<section>
+    <h2>Página con TanStack Query en Next.js App Router 🚀</h2>
+    <p>Archivo: <code>app/posts-tanstack-query/page.tsx</code></p>
+    <pre><code class="language-typescript">
+'use client'
+
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
+
+interface Post {
+  id: number;
+  title: string;
+}
+
+async function fetchPosts(): Promise&lt;Post[]&gt; {
+  const res = await fetch('https://jsonplaceholder.typicode.com/posts');
+  if (!res.ok) throw new Error('Failed to fetch');
+  return res.json();
+}
+
+export default function PostsPageWithTanStackQuery() {
+  const { data: posts, isLoading, error } = useQuery&lt;Post[], Error&gt;({
+    queryKey: ['posts'],
+    queryFn: fetchPosts,
+  });
+
+  if (isLoading) return &lt;div&gt;Cargando...&lt;/div&gt;
+  if (error) return &lt;div&gt;Error: {error.message}&lt;/div&gt;
+
+  return (
+    &lt;&gt;
+      &lt;h1&gt;Posts (usando TanStack Query)&lt;/h1&gt;
+      &lt;ul&gt;
+        {posts?.map(post => (
+          &lt;li key={post.id}&gt;{post.title}&lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/&gt;
+  );
+}
+            </code></pre>
+</section>
+
+<section>
+    <h2>Comparación: useQuery vs useSWR 🥊</h2>
+    <p>Ejemplo: Obtener una lista de posts</p>
+    <div style="display: flex; justify-content: space-between;">
+        <div style="flex: 1; margin-right: 10px;">
+            <h3>TanStack Query (useQuery)</h3>
+            <pre><code class="language-typescript">
+import { useQuery } from '@tanstack/react-query';
+
+const fetchPosts = async () => {
+  const res = await fetch('https://api.example.com/posts');
+  if (!res.ok) throw new Error('Error fetching posts');
+  return res.json();
+};
+
+function Posts() {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['posts'],
+    queryFn: fetchPosts,
+  });
+
+  if (isLoading) return &lt;div&gt;Loading...&lt;/div&gt;;
+  if (error) return &lt;div&gt;Error: {error.message}&lt;/div&gt;;
+
+  return (
+    &lt;ul&gt;
+      {data.map(post => (
+        &lt;li key={post.id}&gt;{post.title}&lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+                    </code></pre>
+        </div>
+        <div style="flex: 1; margin-left: 10px;">
+            <h3>SWR (useSWR)</h3>
+            <pre><code class="language-typescript">
+import useSWR from 'swr';
+
+const fetchPosts = async () => {
+  const res = await fetch('https://api.example.com/posts');
+  if (!res.ok) throw new Error('Error fetching posts');
+  return res.json();
+};
+
+function Posts() {
+  const { data, error } = useSWR('posts', fetchPosts);
+
+  if (!data) return &lt;div&gt;Loading...&lt;/div&gt;;
+  if (error) return &lt;div&gt;Error: {error.message}&lt;/div&gt;;
+
+  return (
+    &lt;ul&gt;
+      {data.map(post => (
+        &lt;li key={post.id}&gt;{post.title}&lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  );
+}
+                    </code></pre>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2>Ventajas de TanStack Query sobre useEffect 🏆</h2>
+    <ul>
+        <li>Código más limpio y declarativo 📝</li>
+        <li>Manejo automático de estados de carga y error 🚦</li>
+        <li>Caching out-of-the-box 🗃️</li>
+        <li>Revalidación y refetch automáticos 🔄</li>
+        <li>Deduplicación de solicitudes 🎭</li>
+        <li>Optimizaciones de rendimiento integradas 🚀</li>
+    </ul>
+</section>
+
+
+<section>
+    <h2>3. useQuery hook en profundidad 🎣</h2>
+    <ul>
+        <li>Estructura básica de useQuery</li>
+        <li>Claves de consulta y su importancia</li>
+        <li>Opciones de configuración comunes</li>
+        <li>Refetch y polling</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Ejemplo básico de useQuery 🌟</h2>
+    <pre><code class="language-typescript">
+import { useQuery } from '@tanstack/react-query'
+
+const fetchPosts = async () => {
+  const res = await fetch('https://jsonplaceholder.typicode.com/posts')
+  if (!res.ok) throw new Error('Network response was not ok')
+  return res.json()
+}
+
+function PostList() {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['posts'],
+    queryFn: fetchPosts,
+  })
+
+  if (isLoading) return &lt;div&gt;Cargando...&lt;/div&gt;
+  if (error) return &lt;div&gt;Error al cargar los posts: {error.message}&lt;/div&gt;
+
+  return (
+    &lt;ul&gt;
+      {data.map(post => (
+        &lt;li key={post.id}&gt;{post.title}&lt;/li&gt;
+      ))}
+    &lt;/ul&gt;
+  )
+}
+            </code></pre>
+</section>
+
+<section>
+    <h2>Propiedades de useQuery Explicadas 🔍</h2>
+    <pre><code class="language-typescript">
+const { data, isLoading, error } = useQuery({
+  queryKey: ['posts'],
+  queryFn: fetchPosts,
+})
+            </code></pre>
+    <ul>
+        <li><strong>queryKey</strong> 🔑:
+            <ul>
+                <li>Array que identifica únicamente la consulta</li>
+                <li>Se usa para caching y sincronización</li>
+                <li>Puede incluir variables que afecten el resultado (ej: ['posts', userId])</li>
+            </ul>
+        </li>
+        <li><strong>queryFn</strong> 🔄:
+            <ul>
+                <li>Función asíncrona que realiza la petición de datos</li>
+                <li>Debe devolver una promesa</li>
+                <li>Puede acceder a las variables del queryKey</li>
+            </ul>
+        </li>
+        <li><strong>data</strong> 📊:
+            <ul>
+                <li>Contiene los datos devueltos por queryFn</li>
+                <li>Es undefined mientras la consulta está cargando o ha fallado</li>
+            </ul>
+        </li>
+        <li><strong>isLoading</strong> ⏳:
+            <ul>
+                <li>Boolean que indica si la consulta está en proceso de carga</li>
+                <li>Útil para mostrar estados de carga</li>
+            </ul>
+        </li>
+        <li><strong>error</strong> ❌:
+            <ul>
+                <li>Contiene el error si la consulta ha fallado</li>
+                <li>Es null si la consulta fue exitosa o está cargando</li>
+            </ul>
+        </li>
+    </ul>
+</section>
+
+<section>
+    <h2>Opciones avanzadas de useQuery 🛠️</h2>
+    <pre><code class="language-typescript">
+const { data, isLoading, error } = useQuery({
+  queryKey: ['posts', userId],
+  queryFn: async () => {
+    const res = await fetch(`https://jsonplaceholder.typicode.com/posts?userId=${userId}`)
+    if (!res.ok) throw new Error('Network response was not ok')
+    return res.json()
+  },
+  staleTime: 5 * 60 * 1000, // 5 minutos
+  gcTime: 15 * 60 * 1000, // 15 minutos
+  refetchOnWindowFocus: false,
+  retry: 3,
+})
+            </code></pre>
+</section>
+
+<section><h2>Opciones Avanzadas de useQuery Explicadas 🔬</h2>
+    <ul>
+        <li><strong>queryKey</strong> 🔑:
+            <ul>
+                <li>['posts', userId]: Array que incluye variables dinámicas</li>
+                <li>La consulta se actualiza automáticamente cuando cambia userId</li>
+            </ul>
+        </li>
+        <li><strong>queryFn</strong> 🔄:
+            <ul>
+                <li>Función asíncrona que usa la variable userId del queryKey</li>
+                <li>Manejo explícito de errores con verificación de res.ok</li>
+            </ul>
+        </li>
+        <li><strong>staleTime</strong> ⏱️:
+            <ul>
+                <li>Tiempo durante el cual los datos se consideran "frescos"</li>
+                <li>5 minutos en este ejemplo</li>
+                <li>Evita refetches innecesarios durante este período</li>
+            </ul>
+        </li>
+        <li><strong>gcTime</strong> 🗑️:
+            <ul>
+                <li>Tiempo que los datos inactivos permanecen en caché</li>
+                <li>15 minutos en este ejemplo</li>
+                <li>Después de este tiempo, los datos se eliminan si no se usan</li>
+            </ul>
+        </li>
+        <li><strong>refetchOnWindowFocus</strong> 🪟:
+            <ul>
+                <li>Controla si se debe recargar al volver a enfocar la ventana</li>
+                <li>false: desactiva esta característica</li>
+            </ul>
+        </li>
+        <li><strong>retry</strong> 🔁:
+            <ul>
+                <li>Número de intentos de reintento en caso de error</li>
+                <li>3 intentos en este ejemplo</li>
+            </ul>
+        </li>
+    </ul>
+</section>
+
+<!--<section>
+    <h2>4. Descanso (10 minutos) ☕</h2>
+    <p>¡Tómate un respiro y vuelve recargado!</p>
+</section>-->
+
+<section>
+    <h2>5. Manejo de estados de carga y error 🚦</h2>
+    <ul>
+        <li>Estados de la consulta: isLoading, isError, isSuccess</li>
+        <li>Manejo de errores y reintentos</li>
+        <li>Suspense mode en React Query</li>
+        <li>Skeleton loaders y placeholders</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Ejemplo de manejo de estados 🎭</h2>
+    <p>Archivo: <code>app/posts/page.tsx</code></p>
+    <pre><code class="language-typescript">
+'use client'
+
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
+import {
+  Container,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  Skeleton,
+  Alert,
+  Box
+} from '@mui/material';
+
+interface Post {
+  id: number;
+  title: string;
+}
+
+const fetchPosts = async (): Promise&lt;Post[]&gt; => {
+  const res = await fetch('https://jsonplaceholder.typicode.com/posts');
+  if (!res.ok) throw new Error('Failed to fetch posts');
+  return res.json();
+};
+
+const PostListSkeleton = () => (
+  &lt;Box&gt;
+    {[...Array(5)].map((_, index) => (
+      &lt;Skeleton key={index} height={60} sx={{ my: 1 }} /&gt;
+    ))}
+  &lt;/Box&gt;
+);
+
+const ErrorMessage = ({ message }: { message: string }) => (
+  &lt;Alert severity="error" sx={{ mt: 2 }}&gt;{message}&lt;/Alert&gt;
+);
+
+export default function PostList() {
+  const { data, isLoading, isError, error } = useQuery&lt;Post[], Error&gt;({
+    queryKey: ['posts'],
+    queryFn: fetchPosts,
+  });
+
+  return (
+    &lt;Container maxWidth="md" sx={{ mt: 4 }}&gt;
+      &lt;Typography variant="h4" component="h1" gutterBottom&gt;
+        Lista de Posts
+      &lt;/Typography&gt;
+
+      {isLoading && &lt;PostListSkeleton /&gt;}
+
+      {isError && &lt;ErrorMessage message={error.message} /&gt;}
+
+      {data && (
+        &lt;List&gt;
+          {data.map(post => (
+            &lt;ListItem key={post.id} divider&gt;
+              &lt;ListItemText primary={post.title} /&gt;
+            &lt;/ListItem&gt;
+          ))}
+        &lt;/List&gt;
+      )}
+    &lt;/Container&gt;
+  );
+}
+            </code></pre>
+</section>
+
+<section>
+    <h2>6. Paginación y scroll infinito 📜</h2>
+    <ul>
+        <li>Implementación de paginación con useQuery</li>
+        <li>Scroll infinito con useInfiniteQuery</li>
+        <li>Manejo de datos paginados en el cache</li>
+        <li>Optimizaciones de rendimiento para listas largas</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Ejemplo de Paginación 📄</h2>
+    <p>Archivo: <code>app/posts/page.tsx</code></p>
+    <pre><code class="language-typescript">
+'use client'
+
+import React, { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+
+interface Post {
+  id: number
+  title: string
+}
+
+const fetchPosts = async (page: number): Promise&lt;Post[]&gt; => {
+  const res = await fetch(`https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=10`)
+  if (!res.ok) throw new Error('Network response was not ok')
+  return res.json()
+}
+
+export default function PostList() {
+  const [page, setPage] = useState(1)
+  const { data, isLoading, error, isPlaceholderData } = useQuery({
+    queryKey: ['posts', page],
+    queryFn: () => fetchPosts(page),
+    placeholderData: keepPreviousData,
+  })
+
+  if (isLoading) return &lt;div&gt;Cargando...&lt;/div&gt;
+  if (error) return &lt;div&gt;Error: {error.message}&lt;/div&gt;
+
+  return (
+    &lt;div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}&gt;
+      &lt;h1&gt;Lista de Posts (Página {page})&lt;/h1&gt;
+
+      &lt;ul style={{ listStyle: 'none', padding: 0 }}&gt;
+        {data?.map(post => (
+          &lt;li key={post.id} style={{ borderBottom: '1px solid #ddd', padding: '10px 0' }}&gt;
+            {post.title}
+          &lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+
+      &lt;div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}&gt;
+        &lt;button
+          onClick={() => setPage(old => Math.max(old - 1, 1))}
+          disabled={page === 1}
+          style={{ padding: '10px 20px' }}
+        &gt;
+          Anterior
+        &lt;/button&gt;
+        &lt;button
+          onClick={() => setPage(old => old + 1)}
+          disabled={isPlaceholderData || (data && data.length &lt; 10)}
+          style={{ padding: '10px 20px' }}
+        &gt;
+          Siguiente
+        &lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  )
+}
+            </code></pre>
+</section>
+
+<section>
+    <h2>Paginación con MUI y TanStack Query v5 📚</h2>
+    <p>Archivo: <code>app/posts/page.tsx</code></p>
+    <pre><code class="language-typescript">
+'use client'
+
+import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import {
+  Container,
+  Typography,
+  Card,
+  CardContent,
+  Grid,
+  Pagination,
+  CircularProgress,
+  Alert
+} from '@mui/material'
+
+interface Post {
+  id: number;
+  title: string;
+  body: string;
+}
+
+async function fetchPosts(page: number): Promise&lt;Post[]&gt; {
+  const res = await fetch(`https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=10`)
+  if (!res.ok) throw new Error('Failed to fetch posts')
+  return res.json()
+}
+
+export default function PostList() {
+  const [page, setPage] = useState(1)
+  const { data, isLoading, error, isPlaceholderData } = useQuery({
+    queryKey: ['posts', page],
+    queryFn: () => fetchPosts(page),
+    placeholderData: keepPreviousData,
+  })
+
+  const handleChange = (event: React.ChangeEvent&lt;unknown&gt;, value: number) => {
+    setPage(value);
+  };
+
+  if (isLoading) return &lt;CircularProgress /&gt;
+  if (error) return &lt;Alert severity="error"&gt;Error: {error.message}&lt;/Alert&gt;
+
+  return (
+    &lt;Container maxWidth="md" sx={{ py: 4 }}&gt;
+      &lt;Typography variant="h4" component="h1" gutterBottom&gt;
+        Lista de Posts
+      &lt;/Typography&gt;
+      &lt;Grid container spacing={3}&gt;
+        {data?.map(post => (
+          &lt;Grid item xs={12} key={post.id}&gt;
+            &lt;Card&gt;
+              &lt;CardContent&gt;
+                &lt;Typography variant="h6" component="h2"&gt;
+                  {post.title}
+                &lt;/Typography&gt;
+                &lt;Typography variant="body2" color="text.secondary"&gt;
+                  {post.body}
+                &lt;/Typography&gt;
+              &lt;/CardContent&gt;
+            &lt;/Card&gt;
+          &lt;/Grid&gt;
+        ))}
+      &lt;/Grid&gt;
+      &lt;Pagination
+        count={10}
+        page={page}
+        onChange={handleChange}
+        sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}
+        disabled={isPlaceholderData}
+      /&gt;
+    &lt;/Container&gt;
+  )
+}
+            </code></pre>
+</section>
+
+<section>
+    <h2>Ejemplo de Scroll Infinito en Next.js 🔄</h2>
+    <p>Archivo: <code>app/posts/page.tsx</code></p>
+    <pre><code class="language-typescript">
+'use client'
+
+import React from 'react'
+import { useInfiniteQuery } from '@tanstack/react-query'
+import InfiniteScroll from 'react-infinite-scroll-component'
+
+interface Post {
+  id: number
+  title: string
+}
+
+const fetchPosts = async ({ pageParam = 1 }): Promise&lt;Post[]&gt; => {
+  const res = await fetch(`https://jsonplaceholder.typicode.com/posts?_page=${pageParam}&_limit=10`)
+  if (!res.ok) throw new Error('Network response was not ok')
+  return res.json()
+}
+
+export default function InfinitePostList() {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isLoading,
+    isFetching,
+    error
+  } = useInfiniteQuery&lt;Post[]&gt;({
+    queryKey: ['posts'],
+    queryFn: fetchPosts,
+    getNextPageParam: (lastPage, pages) => lastPage.length === 10 ? pages.length + 1 : undefined,
+  })
+
+  if (isLoading) return &lt;div&gt;Cargando posts iniciales...&lt;/div&gt;
+  if (error) return &lt;div&gt;Error: {error.message}&lt;/div&gt;
+
+  return (
+    &lt;div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}&gt;
+      &lt;h1&gt;Lista Infinita de Posts&lt;/h1&gt;
+      &lt;InfiniteScroll
+        dataLength={data?.pages.flatMap(page => page).length ?? 0}
+        next={fetchNextPage}
+        hasMore={hasNextPage ?? false}
+        loader={&lt;h4&gt;Cargando más posts...&lt;/h4&gt;}
+        endMessage={&lt;p style={{ textAlign: 'center' }}&gt;&lt;b&gt;¡Has visto todos los posts!&lt;/b&gt;&lt;/p&gt;}
+      &gt;
+        {data?.pages.flatMap(page =>
+          page.map(post => (
+            &lt;div key={post.id} style={{
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              padding: '10px',
+              marginBottom: '10px'
+            }}&gt;
+              &lt;h3&gt;{post.title}&lt;/h3&gt;
+            &lt;/div&gt;
+          ))
+        )}
+      &lt;/InfiniteScroll&gt;
+      {isFetching && !isLoading ? &lt;div&gt;Actualizando en segundo plano...&lt;/div&gt; : null}
+    &lt;/div&gt;
+  )
+}
+            </code></pre>
+</section>
+
+<section>
+    <h2>Página Pública de Noticias con useQuery 📰</h2>
+    <p>Archivo: <code>app/news/page.tsx</code></p>
+    <pre><code class="language-typescript">
+'use client'
+
+import React from 'react';
+import {
+  Container,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  CardMedia,
+  Button,
+  CircularProgress,
+  Alert
+} from '@mui/material';
+import Link from 'next/link';
+import { useQuery } from '@tanstack/react-query';
+
+interface News {
+  id: number;
+  title: string;
+  description: string;
+  imageUrl: string;
+}
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+const fetchNews = async (): Promise&lt;News[]&gt; => {
+  const res = await fetch(`${API_URL}/news`);
+  if (!res.ok) {
+    throw new Error('Failed to fetch news');
+  }
+  return res.json();
+};
+
+export default function NewsPage() {
+  const { data: news, isLoading, error } = useQuery&lt;News[], Error&gt;({
+    queryKey: ['news'],
+    queryFn: fetchNews,
+  });
+
+  if (isLoading) return &lt;CircularProgress /&gt;;
+  if (error) return &lt;Alert severity="error"&gt;Error: {error.message}&lt;/Alert&gt;;
+
+  return (
+    &lt;Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}&gt;
+      &lt;Typography variant="h2" component="h1" gutterBottom&gt;
+        Últimas Noticias
+      &lt;/Typography&gt;
+      &lt;Grid container spacing={4}&gt;
+        {news?.map((item) =&gt; (
+          &lt;Grid item xs={12} sm={6} md={4} key={item.id}&gt;
+            &lt;Card&gt;
+              &lt;CardMedia
+                component="img"
+                height="140"
+                image={item.imageUrl}
+                alt={item.title}
+              /&gt;
+              &lt;CardContent&gt;
+                &lt;Typography gutterBottom variant="h5" component="div"&gt;
+                  {item.title}
+                &lt;/Typography&gt;
+                &lt;Typography variant="body2" color="text.secondary"&gt;
+                  {item.description.substring(0, 100)}...
+                &lt;/Typography&gt;
+                &lt;Link href={`/news/${item.id}`} passHref legacyBehavior&gt;
+                  &lt;Button variant="contained" color="primary" sx={{ mt: 2 }}&gt;
+                    Leer más
+                  &lt;/Button&gt;
+                &lt;/Link&gt;
+              &lt;/CardContent&gt;
+            &lt;/Card&gt;
+          &lt;/Grid&gt;
+        ))}
+      &lt;/Grid&gt;
+    &lt;/Container&gt;
+  );
+}
+            </code></pre>
+</section>
+
+<section>
+    <h2>Página Pública de Noticias con Scroll Infinito 📜</h2>
+    <p>Archivo: <code>app/news/page.tsx</code></p>
+    <pre><code class="language-typescript">
+'use client'
+
+import React from 'react';
+import {
+  Container,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  Button,
+  CircularProgress,
+  Alert,
+  Box
+} from '@mui/material';
+import Link from 'next/link';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import InfiniteScroll from 'react-infinite-scroll-component';
+
+interface News {
+  id: number;
+  title: string;
+  description: string;
+  date: string;
+}
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const PAGE_SIZE = 10;
+
+const fetchNews = async ({ pageParam = 1 }): Promise&lt;News[]&gt; => {
+  const res = await fetch(`${API_URL}/news?pageSize=${PAGE_SIZE}&page=${pageParam}`);
+  if (!res.ok) {
+    throw new Error('Failed to fetch news');
+  }
+  return res.json();
+};
+
+export default function NewsPage() {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isLoading,
+    isError,
+    error
+  } = useInfiniteQuery&lt;News[], Error&gt;({
+    queryKey: ['news'],
+    queryFn: fetchNews,
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage.length === PAGE_SIZE ? allPages.length + 1 : undefined;
+    },
+  });
+
+  if (isLoading) return &lt;CircularProgress /&gt;;
+  if (isError) return &lt;Alert severity="error"&gt;Error: {error.message}&lt;/Alert&gt;;
+
+  const news = data?.pages.flat() || [];
+
+  return (
+    &lt;Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}&gt;
+      &lt;Typography variant="h2" component="h1" gutterBottom&gt;
+        Últimas Noticias
+      &lt;/Typography&gt;
+      &lt;InfiniteScroll
+        dataLength={news.length}
+        next={fetchNextPage}
+        hasMore={!!hasNextPage}
+        loader={&lt;Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}&gt;&lt;CircularProgress /&gt;&lt;/Box&gt;}
+      &gt;
+        &lt;Grid container spacing={4}&gt;
+          {news.map((item) =&gt; (
+            &lt;Grid item xs={12} sm={6} md={4} key={item.id}&gt;
+              &lt;Card&gt;
+                &lt;CardContent&gt;
+                  &lt;Typography gutterBottom variant="h5" component="div"&gt;
+                    {item.title}
+                  &lt;/Typography&gt;
+                  &lt;Typography variant="body2" color="text.secondary"&gt;
+                    {item.description.substring(0, 100)}...
+                  &lt;/Typography&gt;
+                  &lt;Typography variant="caption" display="block" sx={{ mt: 1 }}&gt;
+                    {new Date(item.date).toLocaleDateString()}
+                  &lt;/Typography&gt;
+                  &lt;Link href={`/news/${item.id}`} passHref legacyBehavior&gt;
+                    &lt;Button variant="contained" color="primary" sx={{ mt: 2 }}&gt;
+                      Leer más
+                    &lt;/Button&gt;
+                  &lt;/Link&gt;
+                &lt;/CardContent&gt;
+              &lt;/Card&gt;
+            &lt;/Grid&gt;
+          ))}
+        &lt;/Grid&gt;
+      &lt;/InfiniteScroll&gt;
+    &lt;/Container&gt;
+  );
+}
+            </code></pre>
+</section>
+
+<section>
+    <h2>Dashboard con useQuery 📊</h2>
+    <p>Archivo: <code>app/admin/page.tsx</code></p>
+    <pre><code class="language-typescript">
+'use client'
+
+import React from 'react';
+import { useAuth } from '../context/AuthContext';
+import { Container, Typography, List, ListItem, ListItemText, Button, Box, CircularProgress, Alert } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+
+interface News {
+    id: number;
+    title: string;
+}
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+const fetchNews = async (): Promise&lt;News[]&gt; => {
+    const response = await axios.get(`${API_URL}/news`, {
+        headers: {
+            Authorization: `Bearer ${Cookies.get('token')}`
+        }
+    });
+    return response.data;
+};
+
+const Dashboard: React.FC = () => {
+    const { user } = useAuth();
+
+    const { data: news, isLoading, error } = useQuery&lt;News[], Error&gt;({
+        queryKey: ['news'],
+        queryFn: fetchNews,
+    });
+
+    const addNews = async () => {
+        // Implementación futura
+        console.log('Agregar noticia');
+    };
+
+    const updateNews = async (id: number) => {
+        // Implementación futura
+        console.log('Actualizar noticia', id);
+    };
+
+    const deleteNews = async (id: number) => {
+        // Implementación futura
+        console.log('Eliminar noticia', id);
+    };
+
+    if (isLoading) return &lt;CircularProgress /&gt;;
+    if (error) return &lt;Alert severity="error"&gt;Error: {error.message}&lt;/Alert&gt;;
+
+    return (
+        &lt;Container maxWidth="md"&gt;
+            &lt;Box sx={{ my: 4 }}&gt;
+                &lt;Typography variant="h4" component="h1" gutterBottom&gt;
+                    Bienvenido, {user?.username}!
+                &lt;/Typography&gt;
+                &lt;Typography variant="h5" component="h2" gutterBottom&gt;
+                    Gestión de Noticias
+                &lt;/Typography&gt;
+                &lt;Button variant="contained" color="primary" onClick={addNews} sx={{ mb: 2 }}&gt;
+                    Agregar Noticia
+                &lt;/Button&gt;
+                &lt;List&gt;
+                    {news?.map((item) => (
+                        &lt;ListItem key={item.id} sx={{ bgcolor: 'background.paper', mb: 1, borderRadius: 1 }}&gt;
+                            &lt;ListItemText primary={item.title} /&gt;
+                            &lt;Button onClick={() => updateNews(item.id)} color="info" sx={{ mr: 1 }}&gt;Actualizar&lt;/Button&gt;
+                            &lt;Button onClick={() => deleteNews(item.id)} color="error"&gt;Eliminar&lt;/Button&gt;
+                        &lt;/ListItem&gt;
+                    ))}
+                &lt;/List&gt;
+            &lt;/Box&gt;
+        &lt;/Container&gt;
+    );
+};
+
+export default Dashboard;
+            </code></pre>
+</section>
+
+
+<section>
+    <h2>Resumen 📝</h2>
+    <ul>
+        <li>TanStack Query simplifica la gestión del estado del servidor 🚀</li>
+        <li>useQuery proporciona una API poderosa para fetching de datos 💪</li>
+        <li>El manejo de estados de carga y error es más sencillo con TanStack Query 🚦</li>
+        <li>La paginación y el scroll infinito se implementan fácilmente 📜</li>
+        <li>Mejora significativa en la experiencia del desarrollador y del usuario 😊</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Comparación final: TanStack Query vs Alternativas 🥊</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Característica</th>
+            <th>TanStack Query</th>
+            <th>useEffect + fetch</th>
+            <th>SWR</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Caching automático</td>
+            <td>✅</td>
+            <td>❌</td>
+            <td>✅</td>
+        </tr>
+        <tr>
+            <td>Revalidación automática</td>
+            <td>✅</td>
+            <td>❌</td>
+            <td>✅</td>
+        </tr>
+        <tr>
+            <td>Paginación/Scroll infinito</td>
+            <td>✅ (Fácil)</td>
+            <td>✅ (Manual)</td>
+            <td>✅</td>
+        </tr>
+        <tr>
+            <td>Devtools</td>
+            <td>✅</td>
+            <td>❌</td>
+            <td>❌</td>
+        </tr>
+        <tr>
+            <td>Manejo de mutaciones</td>
+            <td>✅</td>
+            <td>❌</td>
+            <td>✅ (Limitado)</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+<!--<section>
+    <h2>Tarea 📚</h2>
+    <p>Implementar TanStack Query en la aplicación de administración de productos:</p>
+    <ul>
+        <li>Reemplazar las llamadas fetch existentes por useQuery 🔄</li>
+        <li>Implementar una lista paginada de productos 📄</li>
+        <li>Añadir un componente de búsqueda que utilice useQuery 🔍</li>
+        <li>Implementar scroll infinito en la página de catálogo 🔄</li>
+        <li>Utilizar placeholders durante la carga de datos ⏳</li>
+        <li>Manejar y mostrar errores de forma adecuada ⚠️</li>
+    </ul>
+</section>-->
+
+<section>
+    <h2>Recursos adicionales 📚</h2>
+    <ul>
+        <li>
+            <a href="https://tanstack.com/query/latest" target="_blank">Documentación oficial de TanStack Query</a>
+        </li>
+        <li>
+            <a href="https://github.com/TanStack/query/tree/main/examples" target="_blank">Ejemplos oficiales de
+                TanStack Query</a>
+        </li>
+        <li>
+            <a href="https://react-query.tanstack.com/comparison" target="_blank">Comparación con otras librerías</a>
+        </li>
+        <li>
+            <a href="https://www.youtube.com/watch?v=novnyCaa7To" target="_blank">Tutorial en video de TanStack
+                Query</a>
+        </li>
+    </ul>
+</section>
+
+<section>
+    <h2>¡Gracias! 🙏</h2>
+    <p>¿Preguntas?</p>
+</section>

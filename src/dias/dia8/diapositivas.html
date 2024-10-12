@@ -1,0 +1,969 @@
+<section>
+    <h1>Día 8: TanStack Query Avanzado y State Management 🚀</h1>
+    <p>Módulo de desarrollo Frontend</p>
+    <p>👨‍🏫 Docente: Imanol Villarreal</p>
+</section>
+
+<section>
+    <h2>Agenda del Día 📅</h2>
+    <ol>
+        <li>Instalación de MUI DataGrid 🛠️</li>
+        <li>Ejemplos básicos con DataGrid 📊</li>
+        <li>useInfiniteQuery con MUI 🔄</li>
+        <li>Mutaciones en TanStack Query ✏️</li>
+        <li>CRUD completo de noticias con mutaciones 📰</li>
+        <li>Patrones avanzados de state management 🧠</li>
+        <li>Resumen 📝</li>
+    </ol>
+</section>
+
+<section>
+    <h2>Instalación de MUI DataGrid 🛠️</h2>
+    <p>DataGrid es un componente avanzado que no viene incluido en el paquete principal de MUI. Para instalarlo:</p>
+    <pre><code class="language-bash">
+npm install @mui/x-data-grid
+# o
+yarn add @mui/x-data-grid
+    </code></pre>
+    <p>Si necesitas funcionalidades adicionales como filtrado o edición de celdas, puedes instalar la versión Pro:</p>
+    <pre><code class="language-bash">
+npm install @mui/x-data-grid-pro
+# o
+yarn add @mui/x-data-grid-pro
+    </code></pre>
+    <p>Nota: La versión Pro requiere una licencia comercial.</p>
+</section>
+
+<section>
+    <h2>Ejemplo 1: DataGrid Básico en Next.js 📊</h2>
+    <p>Archivo: <code>app/datagrid-example/page.tsx</code></p>
+    <pre><code class="language-typescript">
+'use client'
+
+import React from 'react';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { Container, Typography, Box } from '@mui/material';
+
+const columns: GridColDef[] = [
+  { field: 'id', headerName: 'ID', width: 70 },
+  { field: 'firstName', headerName: 'Nombre', width: 130 },
+  { field: 'lastName', headerName: 'Apellido', width: 130 },
+  { field: 'age', headerName: 'Edad', type: 'number', width: 90 },
+];
+
+const rows = [
+  { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
+  { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
+  { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
+];
+
+export default function DataGridExamplePage() {
+  return (
+    &lt;Container maxWidth="lg"&gt;
+      &lt;Box sx={{ my: 4 }}&gt;
+        &lt;Typography variant="h4" component="h1" gutterBottom&gt;
+          Ejemplo de DataGrid Básico
+        &lt;/Typography&gt;
+        &lt;div style={{ height: 400, width: '100%' }}&gt;
+          &lt;DataGrid
+            rows={rows}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: { pageSize: 5, page: 0 },
+              },
+            }}
+            pageSizeOptions={[5]}
+            checkboxSelection
+            disableRowSelectionOnClick
+          /&gt;
+        &lt;/div&gt;
+      &lt;/Box&gt;
+    &lt;/Container&gt;
+  );
+}
+            </code></pre>
+</section>
+
+<section>
+    <h2>Ejemplo 2: DataGrid con Ordenamiento y Filtrado en Next.js 🔍</h2>
+    <p>Archivo: <code>app/datagrid-advanced/page.tsx</code></p>
+    <pre><code class="language-typescript">
+'use client'
+
+import React from 'react';
+import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { Container, Typography, Box } from '@mui/material';
+
+const columns: GridColDef[] = [
+  { field: 'id', headerName: 'ID', width: 70 },
+  { field: 'firstName', headerName: 'Nombre', width: 130 },
+  { field: 'lastName', headerName: 'Apellido', width: 130 },
+  {
+    field: 'fullName',
+    headerName: 'Nombre completo',
+    description: 'Esta columna no es ordenable ni filtrable.',
+    sortable: false,
+    filterable: false,
+    width: 160,
+    renderCell: (params: GridRenderCellParams) =&gt;
+      \`\${params.row.firstName || ''} \${params.row.lastName || ''}\`,
+  },
+];
+
+const rows = [
+  { id: 1, lastName: 'Snow', firstName: 'Jon' },
+  { id: 2, lastName: 'Lannister', firstName: 'Cersei' },
+  { id: 3, lastName: 'Lannister', firstName: 'Jaime' },
+  { id: 4, lastName: 'Stark', firstName: 'Arya' },
+  { id: 5, lastName: 'Targaryen', firstName: 'Daenerys' },
+];
+
+export default function DataGridAdvancedPage() {
+  return (
+    &lt;Container maxWidth="lg"&gt;
+      &lt;Box sx={{ my: 4 }}&gt;
+        &lt;Typography variant="h4" component="h1" gutterBottom&gt;
+          DataGrid con Ordenamiento y Filtrado
+        &lt;/Typography&gt;
+        &lt;Box sx={{ width: '100%' }}&gt;
+          &lt;DataGrid
+            rows={rows}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: { pageSize: 5, page: 0 },
+              },
+            }}
+            pageSizeOptions={[5, 10, 20]}
+            checkboxSelection
+            disableRowSelectionOnClick
+          /&gt;
+        &lt;/Box&gt;
+      &lt;/Box&gt;
+    &lt;/Container&gt;
+  );
+}
+                </code></pre>
+</section>
+
+<section>
+    <h2>Ejemplo 3: DataGrid con Acciones Personalizadas en Next.js 🛠️</h2>
+    <p>Archivo: <code>app/datagrid-actions/page.tsx</code></p>
+    <pre><code class="language-typescript">
+'use client'
+
+import React from 'react';
+import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { Button, Container, Typography, Box } from '@mui/material';
+
+const handleEdit = (id: number) =&gt; {
+  console.log(\`Editando fila \${id}\`);
+  // Aquí iría la lógica para editar
+};
+
+const handleDelete = (id: number) =&gt; {
+  console.log(\`Eliminando fila \${id}\`);
+  // Aquí iría la lógica para eliminar
+};
+
+const columns: GridColDef[] = [
+  { field: 'id', headerName: 'ID', width: 70 },
+  { field: 'name', headerName: 'Nombre', width: 130 },
+  {
+    field: 'actions',
+    headerName: 'Acciones',
+    width: 200,
+    renderCell: (params: GridRenderCellParams) =&gt; (
+      &lt;&gt;
+        &lt;Button
+          onClick={() =&gt; handleEdit(params.row.id)}
+          variant="contained"
+          color="primary"
+          size="small"
+          style={{ marginRight: 8 }}
+        &gt;
+          Editar
+        &lt;/Button&gt;
+        &lt;Button
+          onClick={() =&gt; handleDelete(params.row.id)}
+          variant="contained"
+          color="secondary"
+          size="small"
+        &gt;
+          Eliminar
+        &lt;/Button&gt;
+      &lt;/&gt;
+    ),
+  },
+];
+
+const rows = [
+  { id: 1, name: 'Jon Snow' },
+  { id: 2, name: 'Cersei Lannister' },
+  { id: 3, name: 'Jaime Lannister' },
+];
+
+export default function DataGridActionsPage() {
+  return (
+    &lt;Container maxWidth="lg"&gt;
+      &lt;Box sx={{ my: 4 }}&gt;
+        &lt;Typography variant="h4" component="h1" gutterBottom&gt;
+          DataGrid con Acciones Personalizadas
+        &lt;/Typography&gt;
+        &lt;Box sx={{ width: '100%' }}&gt;
+          &lt;DataGrid
+            rows={rows}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: { pageSize: 5, page: 0 },
+              },
+            }}
+            pageSizeOptions={[5]}
+            disableRowSelectionOnClick
+          /&gt;
+        &lt;/Box&gt;
+      &lt;/Box&gt;
+    &lt;/Container&gt;
+  );
+}
+    </code></pre>
+</section>
+
+<section>
+    <h2>useInfiniteQuery: Explicación 🔍</h2>
+    <ul>
+        <li>Es un hook de TanStack Query para manejar datos paginados o infinitos.</li>
+        <li>Ideal para implementar scroll infinito o botones "cargar más".</li>
+        <li>Maneja automáticamente el estado de múltiples "páginas" de datos.</li>
+        <li>Proporciona funciones y estados para facilitar la carga de datos adicionales.</li>
+    </ul>
+    <p>Ventajas:</p>
+    <ul>
+        <li>Simplifica la lógica de paginación y carga incremental.</li>
+        <li>Integración perfecta con la caché de React Query.</li>
+        <li>Optimiza el rendimiento al cargar datos por demanda.</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Ejemplo Corregido de useInfiniteQuery en Next.js con Typicode API 📚</h2>
+    <p>Archivo: <code>app/infinite-posts/page.tsx</code></p>
+    <pre><code class="language-typescript">
+'use client'
+
+import React from 'react';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { Container, Typography, Box, Card, CardContent, Button, CircularProgress } from '@mui/material';
+
+interface Post {
+  id: number;
+  title: string;
+  body: string;
+}
+
+interface PageData {
+  data: Post[];
+  nextCursor: number | null;
+}
+
+const fetchPosts = async ({ pageParam = 1 }): Promise&lt;PageData&gt; => {
+  const res = await fetch(`https://jsonplaceholder.typicode.com/posts?_page=${pageParam}&_limit=10`);
+  if (!res.ok) {
+    throw new Error('Network response was not ok');
+  }
+  const data: Post[] = await res.json();
+  return {
+    data,
+    nextCursor: pageParam &lt; 10 ? pageParam + 1 : null
+  };
+};
+
+export default function InfinitePostsPage() {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+  } = useInfiniteQuery({
+    queryKey: ['posts'],
+    queryFn: fetchPosts,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+  });
+
+  return (
+    &lt;Container maxWidth="md"&gt;
+      &lt;Box sx={{ my: 4 }}&gt;
+        &lt;Typography variant="h4" component="h1" gutterBottom&gt;
+          Lista Infinita de Posts
+        &lt;/Typography&gt;
+        {status === 'pending' ? (
+          &lt;CircularProgress /&gt;
+        ) : status === 'error' ? (
+          &lt;Typography color="error"&gt;Error al cargar los posts&lt;/Typography&gt;
+        ) : (
+          &lt;&gt;
+            {data?.pages.map((page, i) => (
+              &lt;React.Fragment key={i}&gt;
+                {page.data.map((post: Post) => (
+                  &lt;Card key={post.id} sx={{ mb: 2 }}&gt;
+                    &lt;CardContent&gt;
+                      &lt;Typography variant="h6"&gt;{post.title}&lt;/Typography&gt;
+                      &lt;Typography variant="body2"&gt;{post.body}&lt;/Typography&gt;
+                    &lt;/CardContent&gt;
+                  &lt;/Card&gt;
+                ))}
+              &lt;/React.Fragment&gt;
+            ))}
+            &lt;Button
+              onClick={() => fetchNextPage()}
+              disabled={!hasNextPage || isFetchingNextPage}
+              variant="contained"
+              sx={{ mt: 2 }}
+            &gt;
+              {isFetchingNextPage
+                ? 'Cargando más...'
+                : hasNextPage
+                ? 'Cargar Más'
+                : 'No hay más posts'}
+            &lt;/Button&gt;
+          &lt;/&gt;
+        )}
+      &lt;/Box&gt;
+    &lt;/Container&gt;
+  );
+}
+            </code></pre>
+</section>
+
+
+<section>
+    <h2>Propiedades de useInfiniteQuery 🛠️</h2>
+    <ul>
+        <li><strong>queryKey</strong>: Identificador único para la consulta. Usado para caching y actualización.</li>
+        <li><strong>queryFn</strong>: Función para obtener datos. Recibe un objeto con <code>pageParam</code>.</li>
+        <li><strong>initialPageParam</strong>: Valor inicial para el parámetro de página.</li>
+        <li><strong>getNextPageParam</strong>: Función que determina el parámetro para la siguiente página.</li>
+        <li><strong>getPreviousPageParam</strong>: Función opcional para determinar el parámetro de la página anterior.
+        </li>
+        <li><strong>data</strong>: Objeto que contiene <code>pages</code> (array de páginas de datos) y
+            <code>pageParams</code>.
+        </li>
+        <li><strong>fetchNextPage</strong>: Función para cargar la siguiente página de datos.</li>
+        <li><strong>fetchPreviousPage</strong>: Función para cargar la página anterior de datos.</li>
+        <li><strong>hasNextPage</strong>: Booleano que indica si hay más páginas disponibles.</li>
+        <li><strong>hasPreviousPage</strong>: Booleano que indica si hay páginas anteriores disponibles.</li>
+        <li><strong>isFetchingNextPage</strong>: Booleano que indica si se está cargando la siguiente página.</li>
+        <li><strong>isFetchingPreviousPage</strong>: Booleano que indica si se está cargando la página anterior.</li>
+        <li><strong>status</strong>: Estado general de la consulta ('pending', 'error', 'success').</li>
+        <li><strong>error</strong>: Contiene el error si la consulta falla.</li>
+        <li><strong>refetch</strong>: Función para recargar manualmente los datos.</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Mutaciones en TanStack Query 🔄</h2>
+    <ul>
+        <li>¿Qué son las mutaciones?
+            <ul>
+                <li>Operaciones que modifican datos en el servidor (crear, actualizar, eliminar).</li>
+                <li>Complemento de las queries para operaciones de escritura.</li>
+            </ul>
+        </li>
+        <li>Características clave:
+            <ul>
+                <li>Manejo de estados de carga, error y éxito.</li>
+                <li>Integración con la caché de TanStack Query.</li>
+                <li>Capacidad de invalidar y actualizar queries relacionadas.</li>
+            </ul>
+        </li>
+        <li>Ventajas:
+            <ul>
+                <li>Simplifica la lógica de actualización de datos.</li>
+                <li>Proporciona un flujo consistente para operaciones de escritura.</li>
+                <li>Facilita la sincronización entre el cliente y el servidor.</li>
+            </ul>
+        </li>
+    </ul>
+</section>
+
+<section>
+    <h2>Servicios de API para Noticias 🌐</h2>
+    <p>Archivo: <code>app/admin/services/newsService.ts</code></p>
+    <pre><code class="language-typescript">
+import axios, { AxiosResponse } from 'axios';
+import Cookies from 'js-cookie';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+export interface News {
+    id: number;
+    title: string;
+    description: string;
+    date: string;
+}
+
+export interface NewsResponse {
+    news: News[];
+    totalCount: number;
+}
+
+const api = axios.create({
+    baseURL: API_URL,
+    headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${Cookies.get('token')}`,
+    },
+});
+
+export const fetchNews = async (page: number = 1, pageSize: number = 10): Promise&lt;NewsResponse&gt; => {
+    const response: AxiosResponse&lt;NewsResponse&gt; = await api.get('/news', {
+        params: {
+            page,
+            pageSize
+        }
+    });
+    return response.data;
+};
+
+export const addNews = async (news: Omit&lt;News, 'id'&gt;): Promise&lt;News&gt; => {
+    const response = await api.post('/news', news);
+    return response.data;
+};
+
+export const updateNews = async (news: News): Promise&lt;News&gt; => {
+    const response = await api.put(`/news/${news.id}`, news);
+    return response.data;
+};
+
+export const deleteNews = async (id: number): Promise&lt;void&gt; => {
+    await api.delete(`/news/${id}`);
+};
+    </code></pre>
+</section>
+
+<section>
+    <h2>Dashboard Básico con DataGrid (Sin Mutaciones) 📊</h2>
+    <p>Archivo: <code>app/admin/page.tsx</code></p>
+    <pre><code class="language-typescript">
+'use client'
+
+import React from 'react';
+import { Container, Typography, Box } from '@mui/material';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { useQuery } from '@tanstack/react-query';
+import { fetchNews } from './services/newsService';
+
+interface News {
+  id: number;
+  title: string;
+  description: string;
+}
+
+const Dashboard: React.FC = () => {
+  const { data: news, isLoading } = useQuery({
+    queryKey: ['news'],
+    queryFn: fetchNews,
+  });
+
+  const columns: GridColDef[] = [
+    { field: 'id', headerName: 'ID', width: 70 },
+    { field: 'title', headerName: 'Título', width: 300 },
+    { field: 'content', headerName: 'Contenido', width: 400 },
+  ];
+
+  return (
+    &lt;Container maxWidth="lg"&gt;
+      &lt;Box sx={{ my: 4 }}&gt;
+        &lt;Typography variant="h4" component="h1" gutterBottom&gt;
+          Dashboard de Noticias
+        &lt;/Typography&gt;
+        &lt;DataGrid
+          rows={news ?? []}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: { pageSize: 5, page: 0 },
+            },
+          }}
+          pageSizeOptions={[5, 10, 25]}
+          loading={isLoading}
+          autoHeight
+        /&gt;
+      &lt;/Box&gt;
+    &lt;/Container&gt;
+  );
+};
+
+export default Dashboard;
+            </code></pre>
+</section>
+
+<section>
+    <h2>Dashboard Principal con DataGrid y Mutaciones 📊</h2>
+    <p>Archivo: <code>app/admin/page.tsx</code></p>
+    <pre><code class="language-typescript">
+'use client'
+
+import React, {useState} from 'react';
+import {Container, Typography, Box, Button} from '@mui/material';
+import {DataGrid, GridColDef, GridRenderCellParams, GridPaginationModel} from '@mui/x-data-grid';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {addNews, deleteNews, fetchNews, News, NewsResponse, updateNews} from './services/newsService';
+import AddEditNewsDialog from './components/AddEditNewsDialog';
+import DeleteNewsDialog from "@/app/admin/components/DeleteNewsDialog";
+
+const Dashboard: React.FC = () => {
+    const [paginationModel, setPaginationModel] = useState&lt;GridPaginationModel&gt;({
+        page: 0,
+        pageSize: 5,
+    });
+    const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+    const [editingNews, setEditingNews] = useState&lt;News | null&gt;(null);
+    const [deletingNewsId, setDeletingNewsId] = useState&lt;number | null&gt;(null);
+
+    const queryClient = useQueryClient();
+
+    const {data, isLoading} = useQuery&lt;NewsResponse&gt;({
+        queryKey: ['news', paginationModel.page, paginationModel.pageSize],
+        queryFn: () => fetchNews(paginationModel.page + 1, paginationModel.pageSize),
+    });
+
+    const addMutation = useMutation({
+        mutationFn: addNews,
+        onSuccess: () => queryClient.invalidateQueries({queryKey: ['news']}),
+    });
+
+    const updateMutation = useMutation({
+        mutationFn: updateNews,
+        onSuccess: () => queryClient.invalidateQueries({queryKey: ['news']}),
+    });
+
+    const deleteMutation = useMutation({
+        mutationFn: deleteNews,
+        onSuccess: () => queryClient.invalidateQueries({queryKey: ['news']}),
+    });
+
+    const columns: GridColDef[] = [
+        {field: 'id', headerName: 'ID', width: 70},
+        {field: 'title', headerName: 'Título', width: 300},
+        {field: 'description', headerName: 'Contenido', width: 400},
+        {
+            field: 'actions',
+            headerName: 'Acciones',
+            width: 200,
+            renderCell: (params: GridRenderCellParams) => (
+                &lt;&gt;
+                    &lt;Button onClick={() => {
+                        setIsAddDialogOpen(true);
+                        setEditingNews(params.row as News);
+                    }}&gt;Editar&lt;/Button&gt;
+                    &lt;Button onClick={() => setDeletingNewsId(params.row.id as number)}&gt;Eliminar&lt;/Button&gt;
+                &lt;/&gt;
+            ),
+        },
+    ];
+
+    return (
+        &lt;Container maxWidth="lg"&gt;
+            &lt;Box sx={{my: 4}}&gt;
+                &lt;Typography variant="h4" component="h1" gutterBottom&gt;
+                    Dashboard de Noticias
+                &lt;/Typography&gt;
+                &lt;Button variant="contained" onClick={() => setIsAddDialogOpen(true)}&gt;
+                    Agregar Noticia
+                &lt;/Button&gt;
+                &lt;DataGrid
+                    rows={data?.news ?? []}
+                    columns={columns}
+                    paginationModel={paginationModel}
+                    onPaginationModelChange={setPaginationModel}
+                    pageSizeOptions={[5, 10, 25]}
+                    pagination
+                    paginationMode="server"
+                    rowCount={data?.totalCount ?? 100}
+                    loading={isLoading}
+                    autoHeight
+                /&gt;
+                {isAddDialogOpen && &lt;AddEditNewsDialog
+                    open={isAddDialogOpen}
+                    onClose={() => {
+                        setIsAddDialogOpen(false);
+                        setEditingNews(null);
+                    }}
+                    news={editingNews}
+                    onSubmit={(data) => {
+                        if (editingNews) {
+                            updateMutation.mutate(data as News);
+                        } else {
+                            addMutation.mutate(data as News);
+                        }
+                    }}
+                /&gt;}
+                &lt;DeleteNewsDialog
+                    open={!!deletingNewsId}
+                    onClose={() => setDeletingNewsId(null)}
+                    onConfirm={() => deletingNewsId && deleteMutation.mutate(deletingNewsId)}
+                /&gt;
+            &lt;/Box&gt;
+        &lt;/Container&gt;
+    );
+};
+
+export default Dashboard;
+    </code></pre>
+</section>
+
+<section>
+    <h2>Diálogo de Agregar/Editar Noticia 📝</h2>
+    <p>Archivo: <code>app/admin/components/AddEditNewsDialog.tsx</code></p>
+    <pre><code class="language-typescript">
+import React from 'react';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+} from '@mui/material';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+
+const newsSchema = z.object({
+  id: z.number().optional(),
+  title: z.string().min(1, 'El título es requerido'),
+  description: z.string().min(1, 'El contenido es requerido'),
+});
+
+type NewsForm = z.infer&lt;typeof newsSchema&gt;;
+
+interface Props {
+  open: boolean;
+  onClose: () => void;
+  news?: NewsForm | null;
+  onSubmit: (data: NewsForm) => void;
+}
+
+const AddEditNewsDialog: React.FC&lt;Props&gt; = ({ open, onClose, news, onSubmit }) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm&lt;NewsForm&gt;({
+    resolver: zodResolver(newsSchema),
+    defaultValues: news || { title: '', description '' },
+  });
+
+  const onFormSubmit = (data: NewsForm) => {
+    onSubmit(data);
+    onClose();
+  };
+
+  return (
+    &lt;Dialog open={open} onClose={onClose}&gt;
+      &lt;DialogTitle&gt;{news ? 'Editar Noticia' : 'Agregar Noticia'}&lt;/DialogTitle&gt;
+      &lt;form onSubmit={handleSubmit(onFormSubmit)}&gt;
+        &lt;DialogContent&gt;
+          &lt;TextField
+            {...register('title')}
+            label="Título"
+            fullWidth
+            margin="normal"
+            error={!!errors.title}
+            helperText={errors.title?.message}
+          /&gt;
+          &lt;TextField
+            {...register('content')}
+            label="Contenido"
+            fullWidth
+            multiline
+            rows={4}
+            margin="normal"
+            error={!!errors.description}
+            helperText={errors.description?.message}
+          /&gt;
+        &lt;/DialogContent&gt;
+        &lt;DialogActions&gt;
+          &lt;Button onClick={onClose}&gt;Cancelar&lt;/Button&gt;
+          &lt;Button type="submit"&gt;{news ? 'Actualizar' : 'Agregar'}&lt;/Button&gt;
+        &lt;/DialogActions&gt;
+      &lt;/form&gt;
+    &lt;/Dialog&gt;
+  );
+};
+
+export default AddEditNewsDialog;
+            </code></pre>
+</section>
+
+<section>
+    <h2>Diálogo de Confirmación para Eliminar 🗑️</h2>
+    <p>Archivo: <code>app/admin/components/DeleteNewsDialog.tsx</code></p>
+    <pre><code class="language-typescript">
+import React from 'react';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+
+interface Props {
+  open: boolean;
+  onClose: () =&gt; void;
+  onConfirm: () =&gt; void;
+}
+
+const DeleteNewsDialog: React.FC&lt;Props&gt; = ({ open, onClose, onConfirm }) =&gt; {
+  const handleDelete = () =&gt; {
+    onConfirm();
+    onClose();
+  };
+
+  return (
+    &lt;Dialog open={open} onClose={onClose}&gt;
+      &lt;DialogTitle&gt;Confirmar Eliminación&lt;/DialogTitle&gt;
+      &lt;DialogContent&gt;
+        ¿Estás seguro de que quieres eliminar esta noticia?
+      &lt;/DialogContent&gt;
+      &lt;DialogActions&gt;
+        &lt;Button onClick={onClose}&gt;Cancelar&lt;/Button&gt;
+        &lt;Button onClick={handleDelete} color="error"&gt;Eliminar&lt;/Button&gt;
+      &lt;/DialogActions&gt;
+    &lt;/Dialog&gt;
+  );
+};
+
+export default DeleteNewsDialog;
+    </code></pre>
+</section>
+
+<section>
+    <h2>Patrones avanzados de state management 🧠</h2>
+    <ul>
+        <li>Queries dependientes 🔗</li>
+        <li>Parallel queries 🚀</li>
+        <li>Optimistic updates 🔮</li>
+        <li>Custom hooks para lógica de negocio 🎣</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Ejemplo: Queries Dependientes 🔗</h2>
+    <pre><code class="language-typescript">
+const { data: user } = useQuery({
+  queryKey: ['user'],
+  queryFn: fetchUser,
+});
+
+const { data: posts } = useQuery({
+  queryKey: ['posts', user?.id],
+  queryFn: () =&gt; fetchUserPosts(user.id),
+  enabled: !!user,
+});
+    </code></pre>
+</section>
+
+<section>
+    <h2>Ejemplo: Optimistic Updates 🔮</h2>
+    <pre><code class="language-typescript">
+const queryClient = useQueryClient();
+
+const optimisticUpdateMutation = useMutation({
+  mutationFn: updateNews,
+  onMutate: async (newNews) =&gt; {
+    await queryClient.cancelQueries({ queryKey: ['news', newNews.id] });
+    const previousNews = queryClient.getQueryData(['news', newNews.id]);
+    queryClient.setQueryData(['news', newNews.id], newNews);
+    return { previousNews };
+  },
+  onError: (err, newNews, context) =&gt; {
+    queryClient.setQueryData(['news', newNews.id], context.previousNews);
+  },
+  onSettled: () =&gt; {
+    queryClient.invalidateQueries({ queryKey: ['news'] });
+  },
+});
+    </code></pre>
+</section>
+
+<section>
+    <h2>Página SSR de Detalle de Noticia (App Router) 📰</h2>
+    <p>Archivo: <code>app/news/[id]/page.tsx</code></p>
+    <pre><code class="language-typescript">
+import { Typography, Container, Paper } from '@mui/material';
+
+interface NewsDetail {
+  id: number;
+  title: string;
+  description: string;
+  date: string;
+}
+
+async function getNews(id: string): Promise&lt;NewsDetail&gt; {
+  const res = await fetch(`${process.env.API_URL}/news/${id}`, { cache: 'no-store' });
+  if (!res.ok) {
+    throw new Error('Failed to fetch news');
+  }
+  return res.json();
+}
+
+export default async function NewsDetailPage({ params }: { params: { id: string } }) {
+  const news = await getNews(params.id);
+
+  return (
+    &lt;Container maxWidth="md"&gt;
+      &lt;Paper elevation={3} sx={{ p: 3, mt: 4 }}&gt;
+        &lt;Typography variant="h4" component="h1" gutterBottom&gt;
+          {news.title}
+        &lt;/Typography&gt;
+        &lt;Typography variant="subtitle1" gutterBottom&gt;
+          Fecha: {new Date(news.date).toLocaleDateString()}
+        &lt;/Typography&gt;
+        &lt;Typography variant="body1"&gt;
+          {news.description}
+        &lt;/Typography&gt;
+      &lt;/Paper&gt;
+    &lt;/Container&gt;
+  );
+}
+            </code></pre>
+</section>
+
+<section>
+    <h2>Configuración de Axios y Variables de Entorno 🔧</h2>
+    <p>1. Configuración de Axios en el backend (archivo: <code>src/config/axios.ts</code>):</p>
+    <pre><code class="language-typescript">
+import axios from 'axios';
+
+const axiosInstance = axios.create({
+  baseURL: process.env.NEXT_JS_URL,
+  timeout: 5000,
+  headers: {
+    'Content-Type': 'application/json',
+  }
+});
+
+export default axiosInstance;
+    </code></pre>
+
+    <p>2. Variables de entorno para el frontend (archivo: <code>.env.local</code>):</p>
+    <pre><code class="language-bash">
+NEXT_PUBLIC_API_URL=http://localhost:3000/api
+REVALIDATION_TOKEN=tu_token_secreto_aqui
+    </code></pre>
+
+    <p>3. Variables de entorno para el backend (archivo: <code>.env</code>):</p>
+    <pre><code class="language-bash">
+PORT=3000
+NEXT_JS_URL=http://localhost:8080
+REVALIDATION_TOKEN=tu_token_secreto_aqui
+    </code></pre>
+
+    <p>Asegúrate de que el <code>REVALIDATION_TOKEN</code> sea el mismo en frontend y backend.</p>
+</section>
+
+<section>
+    <h2>Configuración de Revalidación On-Demand 🔄</h2>
+    <p>Para habilitar la revalidación on-demand, crea un archivo <code>app/api/revalidate/route.ts</code>:</p>
+    <pre><code class="language-typescript">
+import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
+
+export async function POST(request: NextRequest) {
+  const secret = request.nextUrl.searchParams.get('secret');
+  const path = request.nextUrl.searchParams.get('path');
+
+  if (secret !== process.env.REVALIDATION_TOKEN) {
+    return NextResponse.json({ message: 'Invalid token' }, { status: 401 });
+  }
+
+  if (!path) {
+    return NextResponse.json({ message: 'Path is required' }, { status: 400 });
+  }
+
+  try {
+    revalidatePath(path);
+    return NextResponse.json({ revalidated: true, now: Date.now() });
+  } catch (error) {
+    console.error('Error revalidating:', error);
+    return NextResponse.json({ message: 'Error revalidating', error: (error as Error).message }, { status: 500 });
+  }
+}
+    </code></pre>
+</section>
+
+<section>
+    <h2>Llamada a la API de Revalidación de Next.js desde Express 🔄</h2>
+    <p>Actualiza tu <code>newsController.ts</code> en el backend Express:</p>
+    <pre><code class="language-typescript">
+import axios from 'axios';
+import { Request, Response } from 'express';
+import * as newsService from './newsService';
+
+// Función para llamar a la API de revalidación de Next.js
+async function revalidatePage(path: string) {
+  try {
+    const revalidateUrl = `${process.env.NEXT_JS_URL}/api/revalidate?secret=${process.env.REVALIDATION_TOKEN}&path=${path}`;
+    await axios.post(revalidateUrl);
+    console.log(`Revalidated path: ${path}`);
+  } catch (error) {
+    console.error('Error revalidating:', error);
+  }
+}
+
+// Ejemplo de uso en el controlador de actualización
+export const updateNews = async (req: Request, res: Response): Promise&lt;void&gt; => {
+  const id = parseInt(req.params.id);
+  const newsData = req.body;
+  try {
+    const news = await newsService.updateNews(id, newsData);
+    // Llamar a la revalidación después de actualizar la noticia
+    await revalidatePage(`/news/${id}`);
+    res.json(news);
+  } catch (error) {
+    res.status(404).json({message: 'News not found'});
+  }
+};
+
+// Implementa revalidación similar para createNews y deleteNews
+export const createNews = async (req: Request, res: Response): Promise&lt;void&gt; => {
+  const newsData = req.body;
+  try {
+    const news = await newsService.createNews(newsData);
+    await revalidatePage('/news'); // Revalidar la página de listado
+    res.status(201).json(news);
+  } catch (error) {
+    res.status(500).json({message: 'Error creating news'});
+  }
+};
+
+export const deleteNews = async (req: Request, res: Response): Promise&lt;void&gt; => {
+  const id = parseInt(req.params.id);
+  try {
+    const news = await newsService.deleteNews(id);
+    await revalidatePage('/news'); // Revalidar la página de listado
+    await revalidatePage(`/news/${id}`); // Revalidar la página de detalle
+    res.json(news);
+  } catch (error) {
+    res.status(404).json({message: 'News not found'});
+  }
+};
+            </code></pre>
+</section>
+
+<section>
+    <h2>Resumen 📝</h2>
+    <ul>
+        <li>Instalación y uso básico de MUI DataGrid 📊</li>
+        <li>useInfiniteQuery para listas infinitas 🔄</li>
+        <li>Mutaciones para operaciones CRUD ✏️</li>
+        <li>Implementación de un CRUD completo con DataGrid y TanStack Query 📰</li>
+        <li>Patrones avanzados para manejo de estado complejo 🧠</li>
+    </ul>
+</section>
+
+<section>
+    <h2>¡Gracias! 🙏</h2>
+    <p>¿Preguntas?</p>
+</section>
